@@ -1,6 +1,6 @@
 # watchStock
 
-iPhone を開けない場面でも、Apple Watch で日本株の値動きを確認するための仕組み。Mac も有料アカウントも不要で、運用費は 0 円。
+iPhone を開けない場面でも、Apple Watch で日本株の値動きを確認するための仕組み。Mac も有料アカウントも、追加のアプリも不要で、運用費は 0 円。
 
 - **通知**: 取引時間中、定時サマリーと値動きアラートが iPhone 経由で Watch に届く
 - **ショートカット**: Watch の文字盤をタップすると、その時点の株価を表示する
@@ -10,18 +10,19 @@ iPhone を開けない場面でも、Apple Watch で日本株の値動きを確�
 ## 仕組み
 
 ```
-Cloudflare Workers（無料枠）
-  ├─ cron 5 分ごと ─ 株価取得 ─▶ ntfy.sh ─▶ iPhone の ntfy アプリ ─▶ Watch に通知
-  └─ GET /quote ◀─ Watch のショートカット
+Cloudflare Workers（無料枠・各自のアカウント）
+  ├─ /            PWA（ホーム画面に追加して使う Web アプリ）
+  ├─ cron 5 分ごと ─ 株価取得 ─▶ Web プッシュ ─▶ iPhone ─▶ Watch に通知
+  └─ /quote       ◀─ Watch のショートカット
 ```
 
-各利用者が自分の Cloudflare アカウントにデプロイする。このリポジトリの作者はデータを保持も中継もしない。
+各利用者が自分の Cloudflare アカウントにデプロイする。このリポジトリの作者はデータを保持も中継もしない。通知は Apple の Web プッシュで届くため、ntfy などの中継サービスやアプリは使わない。
 
 ## 必要なもの（すべて無料）
 
 - Cloudflare アカウント（クレジットカード不要）
 - Node.js 20 以上（Windows 可）
-- iPhone に ntfy アプリ（App Store で「ntfy」を検索）
+- iPhone は iOS 16.4 以降（Web プッシュの対応版）
 
 ## セットアップ
 
@@ -31,17 +32,48 @@ Cloudflare Workers（無料枠）
 cd worker
 npm install
 npx wrangler login                      # ブラウザで Cloudflare にログイン
-npx wrangler kv namespace create STATE  # 出力された id を wrangler.toml の REPLACE_WITH_KV_ID に貼る
-npx wrangler secret put NTFY_TOPIC      # 推測されにくいランダムな文字列（例: ws-8f3k2q9x7m）
-npx wrangler secret put ACCESS_TOKEN    # ショートカット用の合言葉（ランダムな文字列）
+npx wrangler kv namespace create STATE  # 出力された id を wrangler.toml の [[kv_namespaces]] id に貼る
+npx wrangler secret put ACCESS_TOKEN    # 合言葉。推測されにくいランダムな文字列にする
 npm run deploy                          # 表示された https://watchstock.<name>.workers.dev を控える
 ```
 
-ntfy.sh のトピックは名前を知っている人なら誰でも読めるため、パスワードのように扱うこと。
-
 初回のデプロイで「workers.dev subdomain を登録せよ」と出た場合は、表示されたダッシュボードの URL でサブドメインを登録してから再実行する。登録直後の数分間は SSL エラーで接続できないことがある。
 
-### 2. 銘柄と通知の設定（`worker/wrangler.toml` の `[vars]`）
+通知用の鍵（VAPID）は初回アクセス時に自動で作られ、KV に保存される。設定は不要。
+
+### 2. iPhone で PWA を入れて通知をオンにする
+
+1. Safari で `https://watchstock.<name>.workers.dev/` を開く
+2. 共有ボタン →「ホーム画面に追加」
+3. ホーム画面の「株価」アイコンから開き、合言葉（ACCESS_TOKEN）を入力する
+4. 「通知をオン」を押して許可する
+5. 「テスト通知」を押し、iPhone と Watch に届くことを確かめる
+
+Safari のタブで開いたままでは通知を受け取れない。必ずホーム画面のアイコンから開く。
+
+iPhone がロック中でポケットやカバンに入っていれば、通知は Watch に届く。届かない場合は、Watch アプリ →「通知」で「株価」が「iPhone を反映」になっているか確認する。
+
+PC の Chrome や Edge でも同じ URL を開いて通知をオンにできる。見た目や動きの確認に使える。
+
+### 3. Watch のショートカット
+
+1. PWA の「URL をコピー」を押す
+2. iPhone の「ショートカット」アプリで新規作成し、アクション「URL の内容を取得」を追加して、コピーした URL を貼る
+   - 1 銘柄だけ表示したい場合は、URL の末尾に `&s=7203` を付ける
+3. アクション「結果を表示」を追加し、入力に「URL の内容」を指定する
+4. ショートカットの詳細（ⓘ）で「Apple Watch に表示」をオンにする
+5. Watch の文字盤を長押し →「編集」→ コンプリケーションに「ショートカット」→ 作成したものを選ぶ
+
+表示例:
+
+```
+トヨタ 2,989.5 ▲20.5 +0.69% 15:30
+ソニー 3,710 ▲47 +1.28% 15:30
+```
+
+末尾の時刻は価格の時刻（約 20 分遅れ）。URL には合言葉が含まれるため、ショートカットを他人に共有しないこと。
+
+### 4. 銘柄と通知の設定（`worker/wrangler.toml` の `[vars]`）
 
 | 変数 | 既定値 | 意味 |
 | --- | --- | --- |
@@ -51,48 +83,32 @@ ntfy.sh のトピックは名前を知っている人なら誰でも読めるた
 
 変更したら `npm run deploy` で反映する。
 
-### 3. iPhone の ntfy アプリ
+## PWA の画面
 
-1. ntfy アプリで「+」→ 手順 1 で決めた `NTFY_TOPIC` を購読する
-2. 「設定」→「通知」→ ntfy の通知を許可する
-3. Watch アプリ →「通知」→ ntfy が「iPhone を反映」になっていることを確認する
-
-iPhone がロック中でポケットやカバンに入っていれば、通知は Watch に届く。
-
-### 4. Watch のショートカット
-
-iPhone の「ショートカット」アプリで新規作成する。
-
-1. アクション「URL の内容を取得」を追加。URL は `https://watchstock.<name>.workers.dev/quote?token=<ACCESS_TOKEN>`
-   - 1 銘柄だけ表示したい場合は `&s=7203` を付ける
-2. アクション「結果を表示」を追加し、入力に「URL の内容」を指定する
-3. ショートカットの詳細（ⓘ）で「Apple Watch に表示」をオンにする
-4. Watch の文字盤を長押し →「編集」→ コンプリケーションに「ショートカット」→ 作成したものを選ぶ
-
-表示例:
-
-```
-トヨタ 2,989.5 ▲20.5 +0.69% 15:30
-ソニー 3,710 ▲47 +1.28% 15:30
-```
-
-末尾の時刻は価格の時刻（約 20 分遅れ）。
+- 株価（1 分ごとに自動更新）
+- 通知のオン・オフと送信テスト（「テスト通知」「アラートの見本」「まとめの見本」）。見本は現在の株価を使い、本番と同じ文面で送る
+- 送信履歴（直近 30 件、何台の端末に届けたか）
+- ショートカット用 URL のコピー
+- 現在の設定
 
 ## 動作
 
 - cron は平日 9:00〜16:55 JST に 5 分ごとに起動し、処理するのは 9:00〜16:00 のみ（遅延データの終値が 15:50 ごろ届くため）
 - 価格の日付が当日でなければ休場とみなして通知しない（祝日カレンダーは不要）
 - データが前回サマリーから変わっていなければサマリーを送らない（昼休み・引け後）
+- まとめ通知は同じ種類の古い通知を置き換える。アラートは残る
+- 無効になった端末（通知をオフにした、アプリを消した）は送信時に自動で登録から外れる
 - 無料枠の消費: Workers 約 100 回／日、KV 書き込みは通知時のみ（上限 1,000 回／日）
 
 ## 開発
 
 ```sh
 cd worker
-npm test              # 単体テスト
+npm test              # 単体テスト（暗号化は独立実装 http_ece で復号して検証）
 npm run typecheck
-npm run dev           # ローカル起動。.dev.vars に ACCESS_TOKEN / NTFY_TOPIC を書く
-                      # http://127.0.0.1:8787/quote?token=... と /__scheduled で確認
+npm run dev           # ローカル起動。.dev.vars に ACCESS_TOKEN を書く
+                      # http://127.0.0.1:8787/ と /__scheduled で確認
+node scripts/make-icons.mjs   # アイコン（src/icons.ts）を作り直す
 ```
 
 データソースは `src/quote.ts` の `QuoteProvider` を実装すれば差し替えられる。

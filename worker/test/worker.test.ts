@@ -3,7 +3,8 @@ import { parseYahooChart, type Quote, type QuoteProvider } from "../src/quote";
 import { checkAlert } from "../src/alerts";
 import { formatLine } from "../src/format";
 import { inWatchWindow, isSummaryTick, jstDate } from "../src/market";
-import worker, { parseSymbols, runTick, type Env } from "../src/index";
+import { handleFetch, parseSymbols, runTick, type Env } from "../src/index";
+import type { Message } from "../src/push";
 
 // 2026-09-25 (Fri) at a given JST time, as epoch ms.
 const jst = (hhmm: string, day = "2026-09-25") => Date.parse(`${day}T${hhmm}:00+09:00`);
@@ -30,14 +31,12 @@ class MemKV {
 }
 
 function setup(quotes: Record<string, Quote | Error>) {
-  const posted: any[] = [];
+  const posted: Message[] = [];
   const env = {
     STATE: new MemKV() as unknown as KVNamespace,
     SYMBOLS: Object.keys(quotes).join(","),
     SUMMARY_EVERY_MIN: "30",
     ALERT_STEP_PCT: "2",
-    NTFY_SERVER: "https://ntfy.example",
-    NTFY_TOPIC: "t",
     ACCESS_TOKEN: "secret",
   } satisfies Env;
   const provider: QuoteProvider = {
@@ -47,11 +46,10 @@ function setup(quotes: Record<string, Quote | Error>) {
       return q;
     },
   };
-  const fetchFn = (async (_u: string, init: RequestInit) => {
-    posted.push(JSON.parse(init.body as string));
-    return new Response("ok");
-  }) as unknown as typeof fetch;
-  return { env, provider, fetchFn, posted };
+  const notify = async (m: Message) => {
+    posted.push(m);
+  };
+  return { env, provider, notify, posted };
 }
 
 describe("parseYahooChart", () => {
@@ -125,31 +123,77 @@ describe("parseSymbols", () => {
 
 describe("runTick", () => {
   it("sends a summary on aligned ticks, and not twice for unchanged data", async () => {
-    const { env, provider, fetchFn, posted } = setup({ "7203": quote() });
-    expect(await runTick(env, jst("15:30"), provider, fetchFn)).toEqual(["summary"]);
-    expect(posted[0]).toMatchObject({ topic: "t", title: "株価", message: "トヨタ 2,989.5 ▲20.5 +0.69% 15:30" });
-    expect(await runTick(env, jst("16:00"), provider, fetchFn)).toEqual([]);
+    const { env, provider, notify, posted } = setup({ "7203": quote() });
+    expect(await runTick(env, jst("15:30"), provider, notify)).toEqual(["summary"]);
+    expect(posted[0]).toMatchObject({ kind: "summary", title: "株価", body: "トヨタ 2,989.5 ▲20.5 +0.69% 15:30" });
+    expect(await runTick(env, jst("16:00"), provider, notify)).toEqual([]);
   });
   it("sends an alert when the step is crossed", async () => {
-    const { env, provider, fetchFn, posted } = setup({ "7203": quote({ changePct: -2.5, change: -75 }) });
-    expect(await runTick(env, jst("10:05"), provider, fetchFn)).toEqual(["alert:7203"]);
+    const { env, provider, notify, posted } = setup({ "7203": quote({ changePct: -2.5, change: -75 }) });
+    expect(await runTick(env, jst("10:05"), provider, notify)).toEqual(["alert:7203"]);
     expect(posted[0].title).toBe("下落アラート トヨタ");
-    expect(await runTick(env, jst("10:10"), provider, fetchFn)).toEqual([]);
+    expect(await runTick(env, jst("10:10"), provider, notify)).toEqual([]);
   });
   it("stays quiet on holidays (quote dated another day)", async () => {
-    const { env, provider, fetchFn } = setup({ "7203": quote({ changePct: 5 }) });
-    expect(await runTick(env, jst("10:00", "2026-09-28"), provider, fetchFn)).toEqual([]);
+    const { env, provider, notify } = setup({ "7203": quote({ changePct: 5 }) });
+    expect(await runTick(env, jst("10:00", "2026-09-28"), provider, notify)).toEqual([]);
   });
   it("stays quiet outside the window", async () => {
-    const { env, provider, fetchFn } = setup({ "7203": quote({ changePct: 5 }) });
-    expect(await runTick(env, jst("20:00"), provider, fetchFn)).toEqual([]);
+    const { env, provider, notify } = setup({ "7203": quote({ changePct: 5 }) });
+    expect(await runTick(env, jst("20:00"), provider, notify)).toEqual([]);
   });
 });
 
-describe("fetch /quote", () => {
-  it("rejects missing token", async () => {
-    const { env } = setup({});
-    const res = await worker.fetch(new Request("https://x/quote"), env);
-    expect(res.status).toBe(404);
+describe("HTTP routes", () => {
+  const req = (path: string, init: RequestInit = {}, token?: string) =>
+    new Request(`https://ws.example${path}`, {
+      ...init,
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), "Content-Type": "application/json" },
+    });
+
+  it("serves the PWA shell without a token", async () => {
+    const { env, provider, notify } = setup({});
+    for (const p of ["/", "/manifest.webmanifest", "/sw.js", "/icon-180.png"]) {
+      expect((await handleFetch(req(p), env, provider, notify)).status).toBe(200);
+    }
+    const icon = await handleFetch(req("/icon-180.png"), env, provider, notify);
+    expect(new Uint8Array(await icon.arrayBuffer()).slice(1, 4)).toEqual(new TextEncoder().encode("PNG"));
+  });
+
+  it("rejects API and /quote without the right token", async () => {
+    const { env, provider, notify } = setup({});
+    expect((await handleFetch(req("/api/status"), env, provider, notify)).status).toBe(401);
+    expect((await handleFetch(req("/api/status", {}, "wrong"), env, provider, notify)).status).toBe(401);
+    expect((await handleFetch(req("/quote"), env, provider, notify)).status).toBe(404);
+  });
+
+  it("subscribe -> status -> unsubscribe", async () => {
+    const { env, provider, notify } = setup({ "7203": quote() });
+    const sub = { endpoint: "https://web.push.apple.com/abc", keys: { p256dh: "x", auth: "y" } };
+    const r1 = await handleFetch(req("/api/subscribe", { method: "POST", body: JSON.stringify(sub) }, "secret"), env, provider, notify);
+    expect(await r1.json()).toEqual({ subscriptions: 1 });
+    expect(await env.STATE.get("meta:origin")).toBe("https://ws.example");
+    const bad = await handleFetch(req("/api/subscribe", { method: "POST", body: JSON.stringify({ endpoint: "http://x" }) }, "secret"), env, provider, notify);
+    expect(bad.status).toBe(400);
+    const st = await (await handleFetch(req("/api/status", {}, "secret"), env, provider, notify)).json();
+    expect(st).toMatchObject({ symbols: "7203", subscriptions: 1 });
+    const r2 = await handleFetch(req("/api/unsubscribe", { method: "POST", body: JSON.stringify({ endpoint: sub.endpoint }) }, "secret"), env, provider, notify);
+    expect(await r2.json()).toEqual({ subscriptions: 0 });
+  });
+
+  it("test sends use real wording, marked as samples", async () => {
+    const { env, provider, notify, posted } = setup({ "7203": quote({ changePct: -2.5, change: -75 }) });
+    for (const kind of ["test", "alert", "summary"]) {
+      await handleFetch(req("/api/test", { method: "POST", body: JSON.stringify({ kind }) }, "secret"), env, provider, notify);
+    }
+    expect(posted.map((m) => m.title)).toEqual(["テスト通知", "下落アラート トヨタ（見本）", "株価（見本）"]);
+    expect(posted.every((m) => m.kind === "test")).toBe(true);
+    expect(posted[1].body).toBe("トヨタ 2,989.5 ▼75 -2.50% 15:30");
+  });
+
+  it("/quote returns plain text for the shortcut", async () => {
+    const { env, provider, notify } = setup({ "7203": quote() });
+    const res = await handleFetch(req("/quote?token=secret"), env, provider, notify);
+    expect(await res.text()).toBe("トヨタ 2,989.5 ▲20.5 +0.69% 15:30");
   });
 });

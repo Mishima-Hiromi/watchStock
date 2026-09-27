@@ -10,7 +10,6 @@ crons = ["*/5 0-7 * * 1-5"]
 SYMBOLS = "7203:トヨタ"
 SUMMARY_EVERY_MIN = "30"
 ALERT_STEP_PCT = "2"
-NTFY_SERVER = "https://ntfy.sh"
 
 # Create with: npx wrangler kv namespace create STATE  -> paste the id below
 [[kv_namespaces]]
