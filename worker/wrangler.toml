@@ -1,0 +1,18 @@
+name = "watchstock"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# Every 5 min, 00:00-07:55 UTC (= 9:00-16:55 JST), Mon-Fri. The code narrows it to 9:00-16:00 JST.
+[triggers]
+crons = ["*/5 0-7 * * 1-5"]
+
+[vars]
+SYMBOLS = "7203:トヨタ"
+SUMMARY_EVERY_MIN = "30"
+ALERT_STEP_PCT = "2"
+NTFY_SERVER = "https://ntfy.sh"
+
+# Create with: npx wrangler kv namespace create STATE  -> paste the id below
+[[kv_namespaces]]
+binding = "STATE"
+id = "e17435dfeca549eb862506fd10ea6466"
