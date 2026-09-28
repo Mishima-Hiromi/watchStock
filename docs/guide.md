@@ -70,7 +70,7 @@
 
 2. Cloudflare の画面が開きます。「GitHub と連携する」（英語表示なら Connect GitHub など）を押し、3-1 で作った GitHub のアカウントでログインして許可します
 
-![ボタンを押して GitHub と連携](images/deploy-button.svg)
+![GitHub と連携する](images/deploy-button-2.svg)
 
 3. 設定の画面で、**ACCESS_TOKEN（合言葉）** の欄に、あなたが決めた合言葉を入力します。ほかの欄はそのままで構いません
 4. 「作成してデプロイ」（英語表示なら Create and deploy）を押します
@@ -91,10 +91,16 @@
 
 1. iPhone の **Safari** で、3-3 でメモした URL を開きます（Chrome など、ほかのブラウザではなく Safari を使ってください）
 2. 画面下の共有ボタン（四角から矢印が出ているマーク）を押します
+
+   ![共有ボタン](images/ios-add-home-1.svg)
+
 3. 「ホーム画面に追加」を押します
+
+   ![ホーム画面に追加](images/ios-add-home-2.svg)
+
 4. 右上の「追加」を押します
 
-![ホーム画面に追加](images/ios-add-home.svg)
+   ![追加](images/ios-add-home-3.svg)
 
 Safari で開いた時点では、下のような案内が出ます。ホーム画面に追加すれば消えます。
 
@@ -176,9 +182,12 @@ Apple Watch に最初から入っている「株価」アプリで、株価と�
 
 1. iPhone の「株価」アプリを開きます（見当たらなければ App Store で「株価」を検索して入れ直せます）
 2. 検索欄に証券コード（例: `7203`）を入力し、出てきた銘柄の「＋」を押してウォッチリストに追加します
+
+   ![株価アプリで銘柄を追加](images/stocks-app-1.svg)
+
 3. Apple Watch の「株価」アプリを開くと、同じ銘柄が表示されます。銘柄を押すとチャートが見られます
 
-![株価アプリで銘柄を追加](images/stocks-app.svg)
+   ![Watch の株価アプリ](images/stocks-app-2.svg)
 
 「株価」アプリの数字は Apple が提供しているもので、watchStock の通知の数字とは更新のタイミングが少しずれることがあります。
 
@@ -192,14 +201,21 @@ watchStock に登録した銘柄の株価を、文字盤のボタン 1 つで表
 
 2. iPhone の「ショートカット」アプリを開き、右上の「＋」で新しいショートカットを作ります
 3. 「アクションを追加」で **URL の内容を取得** を探して追加し、URL の欄にコピーした URL を貼り付けます
+
+   ![URL の内容を取得](images/shortcuts-steps-1.svg)
+
 4. 続けて **結果を表示** を追加します
+
+   ![結果を表示](images/shortcuts-steps-2.svg)
+
 5. ショートカットの詳細（ⓘ）で **Apple Watch に表示** をオンにします
 
-![ショートカットの作り方](images/shortcuts-steps.svg)
+   ![Apple Watch に表示](images/shortcuts-steps-3.svg)
 
 6. Watch の文字盤を長押し →「編集」→ コンプリケーションの欄を選び、「ショートカット」から作ったショートカットを選びます
+7. 文字盤に置いたボタンを押すと、その時点の株価（約 20 分遅れ）が表示されます
 
-![文字盤に置いたボタンと表示](images/watch-complication.svg)
+   ![文字盤のボタン](images/watch-complication-1.svg) ![表示された株価](images/watch-complication-2.svg)
 
 コピーした URL には合言葉が入っています。このショートカットは他人に共有しないでください。
 

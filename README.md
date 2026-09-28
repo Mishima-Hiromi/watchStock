@@ -1,5 +1,9 @@
 # watchStock
 
+**はじめての方は [かんたん導入ガイド](docs/guide.md) をご覧ください。** 専門知識なしで、画像付きの手順どおりに設置できます。
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker)
+
 iPhone を開けない場面でも、Apple Watch で日本株の値動きを確認するための仕組み。Mac も有料アカウントも、追加のアプリも不要で、運用費は 0 円。
 
 - **通知**: 取引時間中、定時サマリーと値動きアラートが iPhone 経由で Watch に届く

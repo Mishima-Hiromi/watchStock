@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 746" width="360" height="746">
+<rect x="0" y="0" width="360" height="746" fill="#f8fafc" />
+<rect x="30" y="30" width="300" height="620" rx="36" fill="#1e293b" />
+<rect x="40" y="40" width="280" height="600" rx="28" fill="#ffffff" />
+<text x="180" y="74" font-size="17" fill="#0f172a" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">新規ショートカット</text>
+<rect x="46" y="102" width="268" height="58" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5" />
+<text x="60" y="136" font-size="16" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">URL の内容を取得</text>
+<rect x="46" y="170" width="268" height="58" rx="12" fill="#eff6ff" stroke="#e2e8f0" stroke-width="1.5" />
+<text x="60" y="204" font-size="16" fill="#0f172a" text-anchor="start" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">結果を表示</text>
+<rect x="40" y="164" width="280" height="70" rx="12" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="318" cy="158" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="318" y="163.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">2</text>
+<text x="180" y="686" font-size="17" fill="#0f172a" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">②「結果を表示」を追加</text>
+<text x="180" y="730" font-size="15" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト（実際の画面とは細部が異なります）</text>
+
+</svg>

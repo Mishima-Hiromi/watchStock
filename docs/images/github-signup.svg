@@ -1,27 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 700" width="460" height="700">
-<rect x="0" y="0" width="460" height="700" fill="#f8fafc" />
-<rect x="40" y="36" width="380" height="500" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
-<rect x="40" y="36" width="380" height="44" rx="16" fill="#eef2f7" />
-<rect x="40" y="58" width="380" height="22" fill="#eef2f7" />
-<circle cx="60" cy="58" r="5" fill="#cbd5e1" /><circle cx="76" cy="58" r="5" fill="#cbd5e1" /><circle cx="92" cy="58" r="5" fill="#cbd5e1" />
-<text x="230" y="64" font-size="15" fill="#0f172a" text-anchor="middle" font-weight="600" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">GitHub</text>
-<line x1="40" y1="80" x2="420" y2="80" stroke="#e2e8f0" stroke-width="1.5" />
-<text x="70" y="106" font-size="13" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">メールアドレス</text>
-<rect x="70" y="116" width="320" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
-<text x="84" y="143" font-size="15" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">you@example.com</text>
-<text x="70" y="196" font-size="13" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">パスワード</text>
-<rect x="70" y="206" width="320" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
-<text x="84" y="233" font-size="15" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">••••••••</text>
-<text x="70" y="286" font-size="13" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">ユーザー名</text>
-<rect x="70" y="296" width="320" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
-<text x="84" y="323" font-size="15" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">hanako-kabu</text>
-<rect x="70" y="386" width="320" height="50" rx="10" fill="#2563eb" />
-<text x="230" y="416.6" font-size="16" fill="#ffffff" text-anchor="middle" font-weight="600" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">アカウントを作成</text>
-<rect x="64" y="380" width="332" height="62" rx="14" fill="none" stroke="#ef4444" stroke-width="4" />
-<circle cx="60" cy="376" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
-<text x="60" y="381.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">1</text>
-<rect x="40" y="560" width="380" height="56" rx="10" fill="#fef9c3" stroke="#fde68a" stroke-width="1.5" />
-<text x="56" y="592.225" font-size="13" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">確認コードがメールで届いたら入力</text>
-<text x="230" y="686" font-size="12" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト(実際の画面とは細部が異なります)</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 760" width="460" height="760">
+<rect x="0" y="0" width="460" height="760" fill="#f8fafc" />
+<rect x="40" y="36" width="380" height="540" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+<rect x="40" y="36" width="380" height="48" rx="16" fill="#eef2f7" />
+<rect x="40" y="60" width="380" height="24" fill="#eef2f7" />
+<circle cx="60" cy="60" r="5" fill="#cbd5e1" /><circle cx="76" cy="60" r="5" fill="#cbd5e1" /><circle cx="92" cy="60" r="5" fill="#cbd5e1" />
+<text x="230" y="67" font-size="17" fill="#0f172a" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">GitHub</text>
+<line x1="40" y1="84" x2="420" y2="84" stroke="#e2e8f0" stroke-width="1.5" />
+<text x="70" y="120" font-size="15" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">メールアドレス</text>
+<rect x="70" y="132" width="320" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="84" y="161.6" font-size="16" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">you@example.com</text>
+<text x="70" y="218" font-size="15" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">パスワード</text>
+<rect x="70" y="230" width="320" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="84" y="259.6" font-size="16" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">••••••••</text>
+<text x="70" y="316" font-size="15" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">ユーザー名</text>
+<rect x="70" y="328" width="320" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="84" y="357.6" font-size="16" fill="#94a3b8" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">hanako-kabu</text>
+<rect x="70" y="426" width="320" height="54" rx="10" fill="#2563eb" />
+<text x="230" y="459.3" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">アカウントを作成</text>
+<rect x="64" y="420" width="332" height="66" rx="14" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="388" cy="414" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="388" y="419.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">1</text>
+<rect x="40" y="600" width="380" height="62" rx="10" fill="#fef9c3" stroke="#fde68a" stroke-width="1.5" />
+<text x="56" y="635.875" font-size="15" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">確認コードがメールで届いたら入力</text>
+<text x="230" y="744" font-size="15" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト（実際の画面とは細部が異なります）</text>
 
 </svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 746" width="360" height="746">
+<rect x="0" y="0" width="360" height="746" fill="#f8fafc" />
+<rect x="30" y="30" width="300" height="620" rx="36" fill="#1e293b" />
+<rect x="40" y="40" width="280" height="600" rx="28" fill="#ffffff" />
+<text x="54" y="72" font-size="15" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">検索</text>
+<rect x="54" y="84" width="252" height="48" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="68" y="113.95" font-size="17" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">7203</text>
+<rect x="48" y="78" width="264" height="60" rx="10" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="304" cy="72" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="304" y="77.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">1</text>
+<rect x="54" y="164" width="252" height="60" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5" />
+<text x="68" y="188" font-size="15" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">7203.T</text>
+<text x="68" y="210" font-size="17" fill="#0f172a" text-anchor="start" font-weight="600" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">トヨタ自動車</text>
+<circle cx="282" cy="194" r="16" fill="#2563eb" />
+<text x="282" y="200" font-size="19" fill="#ffffff" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">＋</text>
+<rect x="262" y="174" width="40" height="40" rx="20" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="300" cy="162" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="300" y="167.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">2</text>
+<rect x="54" y="244" width="252" height="34" rx="6" fill="#f1f5f9" />
+<rect x="54" y="292" width="252" height="34" rx="6" fill="#f1f5f9" />
+<rect x="54" y="340" width="252" height="34" rx="6" fill="#f1f5f9" />
+<rect x="54" y="388" width="252" height="34" rx="6" fill="#f1f5f9" />
+<text x="180" y="686" font-size="17" fill="#0f172a" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">iPhoneの「株価」アプリで追加</text>
+<text x="180" y="730" font-size="15" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト（実際の画面とは細部が異なります）</text>
+
+</svg>
