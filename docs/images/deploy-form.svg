@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 740" width="560" height="740">
+<rect x="0" y="0" width="560" height="740" fill="#f8fafc" />
+<rect x="40" y="36" width="480" height="520" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+<rect x="40" y="36" width="480" height="44" rx="16" fill="#eef2f7" />
+<rect x="40" y="58" width="480" height="22" fill="#eef2f7" />
+<circle cx="60" cy="58" r="5" fill="#cbd5e1" /><circle cx="76" cy="58" r="5" fill="#cbd5e1" /><circle cx="92" cy="58" r="5" fill="#cbd5e1" />
+<text x="280" y="64" font-size="15" fill="#0f172a" text-anchor="middle" font-weight="600" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">Cloudflare - デプロイ設定</text>
+<line x1="40" y1="80" x2="520" y2="80" stroke="#e2e8f0" stroke-width="1.5" />
+<text x="70" y="106" font-size="13" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">プロジェクト名</text>
+<rect x="70" y="116" width="420" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="84" y="143" font-size="15" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">watchstock</text>
+<text x="70" y="196" font-size="13" fill="#64748b" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">ACCESS_TOKEN(合言葉)</text>
+<rect x="70" y="206" width="420" height="44" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="84" y="233" font-size="15" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">hanako-2026-kabu</text>
+<rect x="64" y="200" width="432" height="56" rx="10" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="486" cy="196" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="486" y="201.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">1</text>
+<rect x="70" y="306" width="420" height="52" rx="10" fill="#2563eb" />
+<text x="280" y="337.95" font-size="17" fill="#ffffff" text-anchor="middle" font-weight="600" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">作成してデプロイ</text>
+<rect x="64" y="300" width="432" height="64" rx="14" fill="none" stroke="#ef4444" stroke-width="4" />
+<circle cx="60" cy="296" r="15" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="60" y="301.25" font-size="17.25" fill="#ffffff" text-anchor="middle" font-weight="bold" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">2</text>
+<rect x="40" y="580" width="480" height="56" rx="10" fill="#fef9c3" stroke="#fde68a" stroke-width="1.5" />
+<text x="56" y="612.225" font-size="13" fill="#0f172a" text-anchor="start" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">合言葉は他人に教えない。メモしておく</text>
+<text x="280" y="726" font-size="12" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト(実際の画面とは細部が異なります)</text>
+
+</svg>

@@ -84,8 +84,8 @@ code { word-break:break-all; font-size:12px; }
 
   <section id="login" hidden>
     <h2>合言葉</h2>
-    <p class="muted">デプロイ時に設定した ACCESS_TOKEN を入力してください。この端末にだけ保存されます。</p>
-    <div class="row"><input id="token" type="password" autocomplete="off"><button class="primary" id="save">保存</button></div>
+    <p class="muted">設置のときに決めた合言葉を入力してください。この端末にだけ保存されます。</p>
+    <div class="row"><input id="token" type="password" autocomplete="off"><button class="primary" id="save">はじめる</button></div>
     <p class="muted" id="loginErr"></p>
   </section>
 

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 350" width="360" height="350">
+<rect x="0" y="0" width="360" height="350" fill="#f8fafc" />
+<rect x="284" y="123.2" width="10" height="41.6" rx="3" fill="#1e293b" />
+<rect x="70" y="40" width="220" height="260" rx="44" fill="#1e293b" />
+<rect x="80" y="50" width="200" height="240" rx="36" fill="#000000" />
+<text x="180" y="96" font-size="13" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">株価</text>
+<text x="180" y="132" font-size="17" fill="#ffffff" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">上昇アラート</text>
+<text x="180" y="154.1" font-size="17" fill="#ffffff" text-anchor="middle" font-weight="700" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">トヨタ</text>
+<text x="180" y="190" font-size="13" fill="#22c55e" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">トヨタ 3,048 ▲62</text>
+<text x="180" y="206.9" font-size="13" fill="#22c55e" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">+2.08% 10:25</text>
+<text x="180" y="336" font-size="12" fill="#94a3b8" text-anchor="middle" font-weight="normal" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif">イラスト(実際の画面とは細部が異なります)</text>
+
+</svg>

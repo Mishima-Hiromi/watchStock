@@ -1,7 +1,7 @@
 {
-  "name": "worker",
+  "name": "watchstock",
   "version": "1.0.0",
-  "description": "",
+  "description": "Apple Watch で日本株の値動き通知を受け取る PWA（Cloudflare Workers 無料枠）",
   "directories": {
     "test": "test"
   },
@@ -11,9 +11,7 @@
     "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260926.1",
@@ -21,5 +19,25 @@
     "typescript": "^7.0.2",
     "vitest": "^5.0.2",
     "wrangler": "^4.141.0"
+  },
+  "private": true,
+  "cloudflare": {
+    "bindings": {
+      "ACCESS_TOKEN": {
+        "description": "アプリを開くときの**合言葉**。推測されにくい文字列を自分で決めて入力し、メモしておく（例: `hanako-2026-kabu`）。他人に教えない。"
+      },
+      "SYMBOLS": {
+        "description": "最初に表示する銘柄。あとでアプリの画面から変えられるので、そのままでよい。"
+      },
+      "SUMMARY_EVERY_MIN": {
+        "description": "まとめ通知の間隔（分）。あとでアプリの画面から変えられる。"
+      },
+      "ALERT_STEP_PCT": {
+        "description": "値動きアラートの幅（%）。あとでアプリの画面から変えられる。"
+      },
+      "STATE": {
+        "description": "設定や通知の記録を保存する場所。自動で作られる。"
+      }
+    }
   }
 }

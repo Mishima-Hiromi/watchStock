@@ -1,0 +1,380 @@
+<title>watchStock かんたん導入ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --ink: #111a2b;
+    --muted: #56627a;
+    --line: #dde2ea;
+    --accent: #1f5fd6;
+    --accent-ink: #ffffff;
+    --accent-soft: #e5edfc;
+    --up: #13824a;
+    --down: #cc2b2b;
+    --note-bg: #fff4d6;
+    --note-ink: #6b4a00;
+    --warn-bg: #fde8e6;
+    --warn-ink: #8d1f18;
+    --fig-bg: #f8fafc;
+    --sans: "BIZ UDPGothic", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0e131d; --surface: #161d2a; --ink: #e8ecf3; --muted: #a2adc2; --line: #2a3446;
+      --accent: #7ea6f5; --accent-ink: #0e131d; --accent-soft: #1c2a47;
+      --up: #5fcf8e; --down: #f08a80;
+      --note-bg: #3a2f12; --note-ink: #f3d78c; --warn-bg: #3d1d1b; --warn-ink: #f5b3ab; --fig-bg: #f8fafc;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0e131d; --surface: #161d2a; --ink: #e8ecf3; --muted: #a2adc2; --line: #2a3446;
+    --accent: #7ea6f5; --accent-ink: #0e131d; --accent-soft: #1c2a47;
+    --up: #5fcf8e; --down: #f08a80;
+    --note-bg: #3a2f12; --note-ink: #f3d78c; --warn-bg: #3d1d1b; --warn-ink: #f5b3ab; --fig-bg: #f8fafc;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.85 var(--sans); padding-inline: 16px; padding-block: 28px 64px; }
+  .page { max-width: 720px; margin: 0 auto; display: grid; gap: 40px; }
+  h1, h2, h3 { text-wrap: balance; line-height: 1.4; margin: 0; }
+  h1 { font-size: 30px; }
+  h2 { font-size: 23px; display: flex; align-items: baseline; gap: 12px; }
+  h2 .n { font: 500 15px var(--mono); color: var(--accent); border: 1.5px solid var(--accent); border-radius: 6px; padding: 0 7px; line-height: 1.6; flex: none; }
+  h3 { font-size: 18px; }
+  p, ul, ol { margin: 0; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  code, .mono { font-family: var(--mono); font-size: .92em; }
+  code { background: var(--accent-soft); padding: 1px 6px; border-radius: 4px; word-break: break-all; }
+  strong { font-weight: 700; }
+
+  header.hero { display: grid; gap: 14px; }
+  .ticker { display: flex; flex-wrap: wrap; gap: 8px 18px; font: 500 14px var(--mono); color: var(--muted); }
+  .ticker .up { color: var(--up); } .ticker .down { color: var(--down); }
+  .lead { font-size: 17px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fact { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px; font-size: 14px; }
+
+  nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  nav.toc ol { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 4px 20px; padding-left: 1.4em; }
+  nav.toc a { text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  section { display: grid; gap: 18px; scroll-margin-top: 16px; }
+  .sub { display: grid; gap: 14px; padding-top: 6px; }
+  .steps { display: grid; gap: 10px; padding-left: 1.5em; }
+  .steps > li::marker { font: 500 15px var(--mono); color: var(--accent); }
+  ul.plain { display: grid; gap: 6px; padding-left: 1.3em; }
+
+  .note, .warn { border-radius: 10px; padding: 12px 16px; font-size: 15px; }
+  .note { background: var(--note-bg); color: var(--note-ink); }
+  .warn { background: var(--warn-bg); color: var(--warn-ink); }
+  .note code, .warn code { background: transparent; padding: 0; }
+
+  figure { margin: 0; display: grid; gap: 6px; justify-items: center; }
+  figure img { display: block; border-radius: 10px; max-width: 100%; height: auto; }
+  figure.ill img { background: var(--fig-bg); border: 1px solid var(--line); width: 100%; }
+  figure.shot img { width: 340px; border: 1px solid var(--line); box-shadow: 0 6px 22px rgb(17 26 43 / .12); }
+  figcaption { font-size: 13px; color: var(--muted); text-align: center; }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  tr:last-child td { border-bottom: 0; }
+  th { font-size: 13px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  td:first-child { white-space: nowrap; font-weight: 700; }
+
+  .deploy { display: inline-flex; align-items: center; gap: 10px; background: #f38020; color: #fff; font-weight: 700; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-size: 17px; justify-self: start; }
+  .deploy:hover { filter: brightness(1.05); }
+  .deploy span { font: 500 13px var(--mono); opacity: .9; }
+
+  details.faq { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+  details.faq + details.faq { margin-top: -8px; }
+  details.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 700; }
+  details.faq .body { padding: 0 16px 14px; display: grid; gap: 8px; }
+
+  footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
+  @media (max-width: 480px) { h1 { font-size: 25px; } h2 { font-size: 20px; } }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="page">
+  <header class="hero">
+    <div class="ticker" aria-hidden="true">
+      <span>7203 トヨタ <span class="down">▼3 -0.10%</span></span>
+      <span>6758 ソニー <span class="down">▼30 -0.81%</span></span>
+      <span>9984 ソフトバンクG <span class="up">▲94 +1.53%</span></span>
+    </div>
+    <h1>watchStock かんたん導入ガイド</h1>
+    <p class="lead">スマホを出せないときでも、Apple Watch で株価の動きが分かるようにする手順です。専門知識は要りません。上から順番に進めてください。</p>
+    <div class="facts"><span class="fact">所要時間 約 30 分</span><span class="fact">費用 0 円</span><span class="fact">株価は約 20 分遅れ</span></div>
+    <p class="note">「イラスト」と書いてある図は説明用の絵で、実際の画面とは細部が異なります。アプリ（watchStock）の画面は実際の画面です。GitHub と Cloudflare の画面は英語で表示されることがあるので、ボタンの名前には英語表示のときの例も添えています。</p>
+  </header>
+
+  <nav class="toc" aria-label="目次">
+    <ol>
+      <li><a href="#s1">できること</a></li>
+      <li><a href="#s2">用意するもの</a></li>
+      <li><a href="#s3">専用のサーバーを作る</a></li>
+      <li><a href="#s4">iPhone にアプリを入れる</a></li>
+      <li><a href="#s5">通知をオンにする</a></li>
+      <li><a href="#s6">銘柄と通知の設定</a></li>
+      <li><a href="#s7">Watch で株価とチャートを見る</a></li>
+      <li><a href="#s8">困ったとき</a></li>
+    </ol>
+  </nav>
+
+  <section id="s1">
+    <h2><span class="n">1</span>できること</h2>
+    <figure class="ill"><img src="images/overview.svg" alt="サーバーが 5 分ごとに株価を確認し、iPhone に通知、Apple Watch に自動で転送される仕組みの図"></figure>
+    <ul class="plain">
+      <li><strong>株価の通知が Watch に届きます。</strong>取引時間中に決まった間隔で「株価のまとめ」が届きます（最初は 30 分ごと）。株価が大きく動いたとき（最初は前日比 ±2% ごと）は「上昇アラート」「下落アラート」が届きます。</li>
+      <li><strong>いつでも Watch で株価とチャートを見られます。</strong>Apple Watch に最初から入っている「株価」アプリを使います。</li>
+      <li><strong>費用は 0 円です。</strong>あなた専用のサーバーを無料の範囲で動かします。クレジットカードの登録も要りません。</li>
+    </ul>
+    <p class="warn">株価はおよそ 20 分遅れです。売買の判断はご自身の責任でお願いします。</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="n">2</span>用意するもの</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>もの</th><th>条件</th></tr></thead>
+      <tbody>
+        <tr><td>iPhone</td><td>iOS 16.4 以降。「設定」→「一般」→「情報」で確認できます</td></tr>
+        <tr><td>Apple Watch</td><td>iPhone とペアリング済み</td></tr>
+        <tr><td>メールアドレス</td><td>2 つのサービスへの登録に使います。同じアドレスで構いません</td></tr>
+        <tr><td>合言葉</td><td>自分で決めます。<strong>12 文字以上</strong>で、他人に推測されにくいもの（例: <code>hanako-2026-kabu</code>。この例はそのまま使わず、自分で考えてください）。紙などにメモしておいてください</td></tr>
+      </tbody>
+    </table></div>
+    <p>パソコンがあると、手順 3 を大きな画面で進められるので楽です。iPhone だけでもできます。</p>
+  </section>
+
+  <section id="s3">
+    <h2><span class="n">3</span>あなた専用のサーバーを作る（最初の 1 回だけ）</h2>
+    <p>2 つの無料サービスに登録します。どちらも登録は無料で、このアプリの範囲では料金はかかりません。</p>
+    <ul class="plain">
+      <li><strong>GitHub</strong>: アプリの設計図（プログラム）をしまっておく場所</li>
+      <li><strong>Cloudflare</strong>: アプリを動かす場所</li>
+    </ul>
+
+    <div class="sub">
+      <h3>3-1. GitHub に登録する</h3>
+      <ol class="steps">
+        <li><a href="https://github.com/signup" target="_blank" rel="noopener">https://github.com/signup</a> を開きます</li>
+        <li>メールアドレス、パスワード、ユーザー名（英数字）を入力して、アカウントを作成します</li>
+        <li>メールで届く確認コードを入力します</li>
+      </ol>
+      <figure class="ill"><img src="images/github-signup.svg" alt="GitHub の登録画面のイラスト"></figure>
+    </div>
+
+    <div class="sub">
+      <h3>3-2. Cloudflare に登録する</h3>
+      <ol class="steps">
+        <li><a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">https://dash.cloudflare.com/sign-up</a> を開きます</li>
+        <li>メールアドレスとパスワードを入力して、アカウントを作成します</li>
+        <li>届いたメールのリンクを押して、メールアドレスを確認します</li>
+      </ol>
+      <figure class="ill"><img src="images/cloudflare-signup.svg" alt="Cloudflare の登録画面のイラスト"></figure>
+    </div>
+
+    <div class="sub">
+      <h3>3-3. ボタンを押して作る</h3>
+      <ol class="steps">
+        <li>下のボタンを押します
+          <p style="margin-top:10px"><a class="deploy" href="https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker" target="_blank" rel="noopener">Deploy to Cloudflare <span>→</span></a></p>
+        </li>
+        <li>Cloudflare の画面が開きます。「GitHub と連携する」（英語表示なら Connect GitHub など）を押し、3-1 で作った GitHub のアカウントでログインして許可します</li>
+      </ol>
+      <figure class="ill"><img src="images/deploy-button.svg" alt="ボタンを押して GitHub と連携するイラスト"></figure>
+      <ol class="steps" start="3">
+        <li>設定の画面で、<strong>ACCESS_TOKEN（合言葉）</strong>の欄に、あなたが決めた合言葉を入力します。ほかの欄はそのままで構いません</li>
+        <li>「作成してデプロイ」（英語表示なら Create and deploy）を押します</li>
+      </ol>
+      <figure class="ill"><img src="images/deploy-form.svg" alt="合言葉を入力して作成ボタンを押すイラスト"></figure>
+      <ol class="steps" start="5">
+        <li>数分待つと完了します。<code>https://watchstock.〇〇〇.workers.dev</code> という形の URL が表示されるので、<strong>この URL をメモ</strong>してください。これがあなた専用のアプリの住所です</li>
+      </ol>
+      <figure class="ill"><img src="images/deploy-done.svg" alt="完成した URL をメモするイラスト"></figure>
+      <p class="note">「workers.dev のサブドメイン」を決めるよう求められたら、好きな英数字（例: hanako-kabu）を入力してください。URL の「〇〇〇」の部分になります。決めた直後の数分間は URL を開いてもエラーになることがあります。少し待ってから開き直してください。</p>
+    </div>
+  </section>
+
+  <section id="s4">
+    <h2><span class="n">4</span>iPhone にアプリを入れる</h2>
+
+    <div class="sub">
+      <h3>4-1. Safari で開いて、ホーム画面に追加する</h3>
+      <ol class="steps">
+        <li>iPhone の <strong>Safari</strong> で、3-3 でメモした URL を開きます（Chrome など、ほかのブラウザではなく Safari を使ってください）</li>
+        <li>画面下の共有ボタン（四角から矢印が出ているマーク）を押します</li>
+        <li>「ホーム画面に追加」を押します</li>
+        <li>右上の「追加」を押します</li>
+      </ol>
+      <figure class="ill"><img src="images/ios-add-home.svg" alt="Safari の共有ボタンからホーム画面に追加するイラスト"></figure>
+      <p>Safari で開いた時点では、下のような案内が出ます。ホーム画面に追加すれば消えます。</p>
+      <figure class="shot"><img src="images/app-safari-hint.png" alt="Safari で開いたときに出る、ホーム画面に追加するよう促す案内" width="390" height="520"><figcaption>アプリの実際の画面</figcaption></figure>
+    </div>
+
+    <div class="sub">
+      <h3>4-2. ホーム画面のアイコンから開く</h3>
+      <p>ホーム画面に「株価」というアイコンができます。<strong>必ずこのアイコンから開いてください。</strong>Safari から開くと通知を受け取れません。</p>
+      <figure class="ill"><img src="images/ios-home-icon.svg" alt="ホーム画面の株価アイコンのイラスト"></figure>
+    </div>
+
+    <div class="sub">
+      <h3>4-3. 合言葉を入れる</h3>
+      <p>最初に合言葉を聞かれます。3-3 で決めた合言葉を入力して「はじめる」を押します。一度入れれば、次からは聞かれません。</p>
+      <figure class="shot"><img src="images/app-login.png" alt="合言葉の入力画面" width="358" height="227"><figcaption>アプリの実際の画面</figcaption></figure>
+      <p>株価が表示されれば成功です。</p>
+      <figure class="shot"><img src="images/app-home.png" alt="株価が表示されたアプリのトップ画面" width="390" height="700"><figcaption>アプリの実際の画面</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s5">
+    <h2><span class="n">5</span>通知をオンにする</h2>
+
+    <div class="sub">
+      <h3>5-1. 通知を許可する</h3>
+      <ol class="steps">
+        <li>「通知」の欄の「通知をオン」を押します</li>
+      </ol>
+      <figure class="shot"><img src="images/app-notify-off.png" alt="通知をオンのボタンがある通知の欄" width="358" height="298"><figcaption>アプリの実際の画面</figcaption></figure>
+      <ol class="steps" start="2">
+        <li>「通知を許可しますか？」と聞かれたら「許可」を押します</li>
+      </ol>
+      <figure class="ill"><img src="images/ios-permission.svg" alt="通知の許可を求める画面のイラスト"></figure>
+    </div>
+
+    <div class="sub">
+      <h3>5-2. 試しに通知を送る</h3>
+      <p>「テスト通知」を押します。数秒で iPhone に通知が届きます。「アラートの見本」「まとめの見本」を押すと、本番と同じ文面の通知を試せます。</p>
+      <figure class="shot"><img src="images/app-notify-on.png" alt="テスト通知を送信したあとの通知の欄" width="358" height="330"><figcaption>アプリの実際の画面</figcaption></figure>
+    </div>
+
+    <div class="sub">
+      <h3>5-3. Watch に届くか確かめる</h3>
+      <p>「テスト通知」を押したら、<strong>すぐに iPhone の画面を消して</strong>（横のボタンを 1 回押してロック）待ちます。数秒で Watch に通知が届けば完了です。</p>
+      <figure class="ill"><img src="images/ios-notification.svg" alt="iPhone のロック画面に届いた株価の通知のイラスト"></figure>
+      <figure class="ill"><img src="images/watch-notification.svg" alt="Apple Watch に届いた上昇アラートのイラスト"></figure>
+      <p class="note">iPhone を手に持って画面がついているときは、通知は iPhone にだけ表示され、Watch には届きません。これは Apple Watch の仕組みです。</p>
+    </div>
+  </section>
+
+  <section id="s6">
+    <h2><span class="n">6</span>銘柄と通知の設定を変える</h2>
+    <p>アプリを下に進むと「通知の設定」があります。変えたら「保存」を押してください。次の通知から反映されます。</p>
+    <figure class="shot"><img src="images/app-settings.png" alt="銘柄、まとめ通知、値動きアラートを設定する画面" width="358" height="578"><figcaption>アプリの実際の画面</figcaption></figure>
+    <div class="table-wrap"><table>
+      <thead><tr><th>項目</th><th>書き方・選び方</th></tr></thead>
+      <tbody>
+        <tr><td>銘柄</td><td>1 行に 1 銘柄。証券コード（4 桁）と表示したい名前をスペースで区切ります。例: <code>7203 トヨタ</code>。最大 10 銘柄</td></tr>
+        <tr><td>まとめ通知</td><td>全銘柄の株価をまとめて送る間隔。「送らない」も選べます</td></tr>
+        <tr><td>値動きアラート</td><td>前日比がこの幅を超えるたびに送ります。「±2% ごと」なら、+2%、+4%… と -2%、-4%… のときに届きます。同じ日に同じ段階では 1 回だけです</td></tr>
+      </tbody>
+    </table></div>
+    <p>証券コードが間違っていると、保存するときに「株価を取得できません」と表示されます。証券コードは、会社名と「株価」で検索すると見つかります。</p>
+    <p>通知が届くのは平日の 9:00〜16:00 です。土日祝日は届きません。</p>
+  </section>
+
+  <section id="s7">
+    <h2><span class="n">7</span>Watch でいつでも株価とチャートを見る</h2>
+
+    <div class="sub">
+      <h3>7-1. Apple の「株価」アプリを使う（おすすめ）</h3>
+      <p>Apple Watch に最初から入っている「株価」アプリで、株価とチャートをいつでも見られます。</p>
+      <ol class="steps">
+        <li>iPhone の「株価」アプリを開きます（見当たらなければ App Store で「株価」を検索して入れ直せます）</li>
+        <li>検索欄に証券コード（例: <code>7203</code>）を入力し、出てきた銘柄の「＋」を押してウォッチリストに追加します</li>
+        <li>Apple Watch の「株価」アプリを開くと、同じ銘柄が表示されます。銘柄を押すとチャートが見られます</li>
+      </ol>
+      <figure class="ill"><img src="images/stocks-app.svg" alt="iPhone の株価アプリで銘柄を追加し、Watch に表示されるイラスト"></figure>
+      <p class="note">「株価」アプリの数字は Apple が提供しているもので、watchStock の通知の数字とは更新のタイミングが少しずれることがあります。</p>
+    </div>
+
+    <div class="sub">
+      <h3>7-2. 文字盤のボタンで watchStock の株価を見る（お好みで）</h3>
+      <p>watchStock に登録した銘柄の株価を、文字盤のボタン 1 つで表示できます。</p>
+      <ol class="steps">
+        <li>watchStock アプリの下のほうにある「URL をコピー」を押します</li>
+      </ol>
+      <figure class="shot"><img src="images/app-shortcut-url.png" alt="ショートカット用の URL をコピーする欄" width="358" height="245"><figcaption>アプリの実際の画面</figcaption></figure>
+      <ol class="steps" start="2">
+        <li>iPhone の「ショートカット」アプリを開き、右上の「＋」で新しいショートカットを作ります</li>
+        <li>「アクションを追加」で<strong>「URL の内容を取得」</strong>を探して追加し、URL の欄にコピーした URL を貼り付けます</li>
+        <li>続けて<strong>「結果を表示」</strong>を追加します</li>
+        <li>ショートカットの詳細（ⓘ）で<strong>「Apple Watch に表示」</strong>をオンにします</li>
+      </ol>
+      <figure class="ill"><img src="images/shortcuts-steps.svg" alt="ショートカットに 2 つのアクションを追加し、Apple Watch に表示をオンにするイラスト"></figure>
+      <ol class="steps" start="6">
+        <li>Watch の文字盤を長押し →「編集」→ コンプリケーションの欄を選び、「ショートカット」から作ったショートカットを選びます</li>
+      </ol>
+      <figure class="ill"><img src="images/watch-complication.svg" alt="文字盤のボタンを押すと株価が表示されるイラスト"></figure>
+      <p class="warn">コピーした URL には合言葉が入っています。このショートカットは他人に共有しないでください。</p>
+    </div>
+  </section>
+
+  <section id="s8">
+    <h2><span class="n">8</span>困ったとき</h2>
+    <details class="faq" open>
+      <summary>通知が届かない</summary>
+      <div class="body"><ul class="plain">
+        <li>ホーム画面の「株価」アイコンから開いて「通知をオン」を押しましたか。Safari から開いた画面ではオンにできません</li>
+        <li>iPhone の「設定」→「通知」→「株価」で、通知が許可されているか確認してください</li>
+        <li>集中モード（おやすみモードなど）がオンになっていないか確認してください</li>
+        <li>土日祝日や、平日の 16:00 以降は届きません</li>
+        <li>アプリの「送信履歴」に記録があれば、サーバーからは送れています。iPhone 側の設定を確認してください</li>
+      </ul></div>
+    </details>
+    <details class="faq">
+      <summary>iPhone には届くが Watch に届かない</summary>
+      <div class="body"><ul class="plain">
+        <li>iPhone の「Watch」アプリ →「通知」→「株価」が「iPhone を反映」になっているか確認してください</li>
+        <li>iPhone の画面がついていると、通知は Watch に届きません</li>
+      </ul></div>
+    </details>
+    <details class="faq">
+      <summary>合言葉を忘れた</summary>
+      <div class="body"><p>Cloudflare にログインし、「Workers」の一覧から <code>watchstock</code> を選び、「設定」の「変数とシークレット」（英語表示なら Settings → Variables and Secrets）で ACCESS_TOKEN を新しい合言葉に変えてください。そのあと、アプリの「合言葉を消す」を押して、新しい合言葉を入れ直します。</p></div>
+    </details>
+    <details class="faq">
+      <summary>株価の数字が古い</summary>
+      <div class="body"><p>約 20 分遅れの株価です。数字の横の時刻が、その株価の時刻です。</p></div>
+    </details>
+    <details class="faq">
+      <summary>お金はかかりますか</summary>
+      <div class="body"><p>かかりません。GitHub と Cloudflare の無料の範囲で動きます。クレジットカードの登録も要りません。</p></div>
+    </details>
+    <details class="faq">
+      <summary>iPhone を買い替えた</summary>
+      <div class="body"><p>新しい iPhone で「<a href="#s4">4. iPhone にアプリを入れる</a>」からやり直してください。サーバーはそのまま使えます。</p></div>
+    </details>
+    <details class="faq">
+      <summary>やめたい</summary>
+      <div class="body"><p>ホーム画面の「株価」アイコンを削除します。Cloudflare の「Workers」から <code>watchstock</code> を削除すると、サーバーも止まります。</p></div>
+    </details>
+    <details class="faq">
+      <summary>手順 3 が難しい（設置を人に手伝ってもらう）</summary>
+      <div class="body">
+        <p>詳しい人に設置を頼めます。この場合も、サーバーは<strong>あなたの Cloudflare アカウント</strong>に作ります。ほかの人のアカウントに作ってもらうと、その人があなたに株価を配ることになり、データ提供元の利用条件に触れるおそれがあるためです。</p>
+        <ol class="steps">
+          <li>あなたが 3-2 の手順で Cloudflare に登録します</li>
+          <li>Cloudflare にログインし、アカウントの管理画面の「メンバー」（英語表示なら Members）で「メンバーを招待」（Invite）を押し、手伝ってくれる人のメールアドレスを入力して招待を送ります</li>
+          <li>手伝ってくれる人に、合言葉を決めて設置してもらいます</li>
+          <li>完成した URL と合言葉を受け取ったら、「<a href="#s4">4. iPhone にアプリを入れる</a>」から進めます</li>
+          <li>設置が終わったら、メンバーから外して構いません</li>
+        </ol>
+        <figure class="ill"><img src="images/cloudflare-invite.svg" alt="Cloudflare でメンバーを招待するイラスト"></figure>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p>watchStock は MIT ライセンスで公開されている無料のソフトウェアです。株価は、あなたのサーバーが Yahoo Finance からあなたのために取得しています。公式に提供されている仕組みではないため、予告なく取得できなくなることがあります。</p>
+    <p>このガイドは 2026 年 9 月時点の画面をもとにしています。</p>
+  </footer>
+</div>
