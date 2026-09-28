@@ -53,6 +53,11 @@ section { background:var(--card); border:1px solid var(--line); border-radius:14
 button { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:10px 12px; cursor:pointer; }
 button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
 button:disabled { opacity:.5; }
+.form { display:grid; gap:14px; }
+.form label { display:grid; gap:6px; font-weight:600; font-size:15px; }
+.form .muted { font-weight:400; }
+textarea, select { font:inherit; width:100%; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--fg); }
+.err { color:var(--down); }
 input { font:inherit; width:100%; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--bg); color:var(--fg); }
 .row { display:flex; gap:8px; flex-wrap:wrap; }
 .q { display:grid; grid-template-columns:1fr auto; align-items:baseline; padding:8px 0; border-bottom:1px solid var(--line); }
@@ -124,7 +129,27 @@ code { word-break:break-all; font-size:12px; }
     </section>
 
     <section>
-      <h2>設定</h2>
+      <h2>通知の設定</h2>
+      <form id="settingsForm" class="form">
+        <label>銘柄 <span class="muted">1 行に 1 銘柄。「コード 表示名」の形で、表示名は省略可。最大 10 銘柄</span>
+          <textarea id="symbols" rows="4" placeholder="7203 トヨタ&#10;6758 ソニー"></textarea></label>
+        <label>まとめ通知 <span class="muted">全銘柄の株価を定期的に送る</span>
+          <select id="summary">
+            <option value="0">送らない</option><option value="15">15 分ごと</option><option value="30">30 分ごと</option>
+            <option value="60">1 時間ごと</option><option value="120">2 時間ごと</option>
+          </select></label>
+        <label>値動きアラート <span class="muted">前日比がこの幅を新たに超えるたびに送る</span>
+          <select id="step">
+            <option value="0">送らない</option><option value="1">±1% ごと</option><option value="2">±2% ごと</option>
+            <option value="3">±3% ごと</option><option value="5">±5% ごと</option>
+          </select></label>
+        <div class="row"><button class="primary" type="submit" id="saveSettings">保存</button></div>
+        <p class="muted" id="settingsResult"></p>
+      </form>
+    </section>
+
+    <section>
+      <h2>この端末</h2>
       <p class="muted" id="config"></p>
       <div class="row"><button id="logout">合言葉を消す</button></div>
     </section>
@@ -171,12 +196,34 @@ async function loadHistory() {
   } catch (e) { handleErr(e); }
 }
 
-async function loadConfig() {
-  const c = await api("/api/status");
-  $("config").innerHTML = "銘柄: " + esc(c.symbols) + "<br>まとめ: " + (c.summaryEveryMin > 0 ? c.summaryEveryMin + " 分ごと" : "送らない")
-    + "<br>アラート: 前日比 " + c.alertStepPct + "% 刻み<br>通知登録: " + c.subscriptions + " 端末"
-    + "<br>変更は wrangler.toml を編集して再デプロイ";
+function setSelect(sel, value, text) {
+  if (![...sel.options].some((o) => Number(o.value) === value)) sel.add(new Option(text, String(value)));
+  sel.value = String(value);
 }
+
+async function loadConfig() {
+  const { settings: st, subscriptions } = await api("/api/status");
+  $("symbols").value = st.symbols.map((s) => (s.code + " " + s.label).trim()).join("\\n");
+  setSelect($("summary"), st.summaryEveryMin, st.summaryEveryMin + " 分ごと");
+  setSelect($("step"), st.alertStepPct, "±" + st.alertStepPct + "% ごと");
+  $("config").textContent = "通知を受け取る端末: " + subscriptions + " 台";
+}
+
+$("settingsForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const symbols = $("symbols").value.split("\\n").map((l) => l.trim()).filter(Boolean)
+    .map((l) => { const [code, ...rest] = l.split(/[\\s:：]+/); return { code, label: rest.join(" ") }; });
+  const body = { symbols, summaryEveryMin: Number($("summary").value), alertStepPct: Number($("step").value) };
+  $("saveSettings").disabled = true; $("settingsResult").className = "muted"; $("settingsResult").textContent = "銘柄を確認中…";
+  try {
+    const res = await fetch("/api/settings", { method: "PUT", headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const r = await res.json();
+    if (res.status === 401) return handleErr(new Error("unauthorized"));
+    if (!res.ok) { $("settingsResult").className = "err"; $("settingsResult").innerHTML = (r.errors || ["保存できませんでした"]).map(esc).join("<br>"); }
+    else { $("settingsResult").textContent = "保存しました。次の通知から反映されます"; loadConfig(); loadQuotes(); }
+  } catch (err) { $("settingsResult").className = "err"; $("settingsResult").textContent = "保存できませんでした: " + err.message; }
+  $("saveSettings").disabled = false;
+};
 
 const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);

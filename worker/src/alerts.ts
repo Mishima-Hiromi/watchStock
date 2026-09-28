@@ -1,6 +1,8 @@
 /** Per-symbol extremes already alerted today, in units of the alert step. */
 export interface AlertState {
   date: string;
+  /** Step the levels were measured in; a changed step starts over. */
+  step?: number;
   maxUp: number;
   maxDown: number;
 }
@@ -16,7 +18,7 @@ export function checkAlert(
   prev: AlertState | undefined,
 ): { alert: boolean; state: AlertState } {
   const state: AlertState =
-    prev && prev.date === date ? { ...prev } : { date, maxUp: 0, maxDown: 0 };
+    prev && prev.date === date && (prev.step ?? stepPct) === stepPct ? { ...prev, step: stepPct } : { date, step: stepPct, maxUp: 0, maxDown: 0 };
   if (stepPct <= 0) return { alert: false, state };
   const level = Math.trunc(changePct / stepPct);
   if (level > state.maxUp) {

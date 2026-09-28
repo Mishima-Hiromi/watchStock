@@ -3,12 +3,13 @@ import { formatLine, formatLines } from "./format";
 import { inWatchWindow, isSummaryTick, jstDate } from "./market";
 import { checkAlert, type AlertState } from "./alerts";
 import { addSub, getHistory, getVapidKeys, listSubs, removeSub, webPushNotifier, type Message, type Notifier } from "./push";
+import { getSettings, validateSettings, type Symbol } from "./settings";
 import { APP_HTML, MANIFEST, SERVICE_WORKER } from "./app";
 import { ICON_180, ICON_192, ICON_512 } from "./icons";
 
 export interface Env {
   STATE: KVNamespace;
-  /** "7203:トヨタ,6758:ソニー" — label after ":" is optional. */
+  /** Initial default only; users change settings in the app. "7203:トヨタ,6758:ソニー" */
   SYMBOLS: string;
   SUMMARY_EVERY_MIN: string;
   ALERT_STEP_PCT: string;
@@ -16,20 +17,11 @@ export interface Env {
   ACCESS_TOKEN: string;
 }
 
-export function parseSymbols(s: string): Array<{ code: string; label: string }> {
-  return s
-    .split(",")
-    .map((x) => x.trim())
-    .filter(Boolean)
-    .map((x) => {
-      const [code, label = ""] = x.split(":").map((y) => y.trim());
-      return { code, label };
-    });
-}
+export { parseSymbols } from "./settings";
 
-async function fetchAll(provider: QuoteProvider, symbols: string): Promise<Array<Quote | Error>> {
+async function fetchAll(provider: QuoteProvider, symbols: Symbol[]): Promise<Array<Quote | Error>> {
   return Promise.all(
-    parseSymbols(symbols).map(({ code, label }) =>
+    symbols.map(({ code, label }) =>
       provider.get(code, label).catch((e: unknown) => (e instanceof Error ? e : new Error(String(e)))),
     ),
   );
@@ -56,12 +48,13 @@ export async function runTick(
   const sent: string[] = [];
   if (!inWatchWindow(nowMs)) return sent;
   const today = jstDate(nowMs);
-  const results = await fetchAll(provider, env.SYMBOLS);
+  const settings = await getSettings(env.STATE, env);
+  const results = await fetchAll(provider, settings.symbols);
   // A quote stamped on another day means the market is closed (holiday): stay quiet.
   const live = results.filter((r): r is Quote => !(r instanceof Error) && jstDate(r.marketTime * 1000) === today);
   if (live.length === 0) return sent;
 
-  const step = Number(env.ALERT_STEP_PCT);
+  const step = settings.alertStepPct;
   for (const q of live) {
     const key = `alert:${q.code}`;
     const prev = await env.STATE.get<AlertState>(key, "json");
@@ -72,7 +65,7 @@ export async function runTick(
     sent.push(`alert:${q.code}`);
   }
 
-  if (isSummaryTick(nowMs, Number(env.SUMMARY_EVERY_MIN))) {
+  if (isSummaryTick(nowMs, settings.summaryEveryMin)) {
     // Skip if nothing moved since the last summary (e.g. lunch break, after close).
     const stamp = live.map((q) => `${q.code}@${q.marketTime}`).join(",");
     if ((await env.STATE.get("summary:last")) !== stamp) {
@@ -92,6 +85,15 @@ const png = (b64: string) =>
     headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=86400" },
   });
 
+/** Parsed JSON body, or undefined when the body is not valid JSON. */
+async function readJson(req: Request): Promise<any> {
+  try {
+    return await req.json();
+  } catch {
+    return undefined;
+  }
+}
+
 function authorized(req: Request, url: URL, env: Env): boolean {
   if (!env.ACCESS_TOKEN) return false;
   const bearer = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
@@ -107,22 +109,28 @@ async function handleApi(
 ): Promise<Response> {
   if (!authorized(req, url, env)) return json({ error: "unauthorized" }, 401);
   const route = `${req.method} ${url.pathname}`;
+  const settings = await getSettings(env.STATE, env);
   switch (route) {
     case "GET /api/status":
-      return json({
-        symbols: env.SYMBOLS,
-        summaryEveryMin: Number(env.SUMMARY_EVERY_MIN),
-        alertStepPct: Number(env.ALERT_STEP_PCT),
-        subscriptions: (await listSubs(env.STATE)).length,
-      });
+      return json({ settings, subscriptions: (await listSubs(env.STATE)).length });
+    case "PUT /api/settings": {
+      const { settings: next, errors } = validateSettings(await readJson(req));
+      if (!next) return json({ errors }, 400);
+      // Reject codes the data source does not know, so typos surface now rather than as silent gaps.
+      const checked = await fetchAll(provider, next.symbols);
+      const unknown = next.symbols.filter((_, i) => checked[i] instanceof Error).map((s) => s.code);
+      if (unknown.length) return json({ errors: unknown.map((c) => `銘柄コード「${c}」の株価を取得できません`) }, 400);
+      await env.STATE.put("settings", JSON.stringify(next));
+      return json({ settings: next });
+    }
     case "GET /api/quotes": {
-      const results = await fetchAll(provider, env.SYMBOLS);
+      const results = await fetchAll(provider, settings.symbols);
       return json({ quotes: results.map((r) => (r instanceof Error ? { error: r.message } : r)) });
     }
     case "GET /api/vapid":
       return json({ publicKey: (await getVapidKeys(env.STATE)).publicKey });
     case "POST /api/subscribe": {
-      const sub = (await req.json()) as any;
+      const sub = await readJson(req);
       if (typeof sub?.endpoint !== "string" || !sub.endpoint.startsWith("https://") || !sub.keys?.p256dh || !sub.keys?.auth) {
         return json({ error: "invalid subscription" }, 400);
       }
@@ -131,14 +139,14 @@ async function handleApi(
       return json({ subscriptions: await addSub(env.STATE, sub) });
     }
     case "POST /api/unsubscribe": {
-      const { endpoint } = (await req.json()) as { endpoint?: string };
+      const { endpoint } = ((await readJson(req)) ?? {}) as { endpoint?: string };
       return json({ subscriptions: endpoint ? await removeSub(env.STATE, endpoint) : (await listSubs(env.STATE)).length });
     }
     case "POST /api/test": {
-      const { kind } = (await req.json()) as { kind?: string };
+      const { kind } = ((await readJson(req)) ?? {}) as { kind?: string };
       let msg: Message;
       if (kind === "alert" || kind === "summary") {
-        const results = await fetchAll(provider, env.SYMBOLS);
+        const results = await fetchAll(provider, settings.symbols);
         const first = results.find((r): r is Quote => !(r instanceof Error));
         if (kind === "alert" && !first) return json({ error: "株価を取得できませんでした" }, 502);
         msg = kind === "alert" ? alertMessage(first!) : summaryMessage(results);
@@ -179,9 +187,10 @@ export async function handleFetch(
     case "/quote": {
       // Plain text for the Apple Watch shortcut.
       if (!authorized(req, url, env)) return new Response("Not found", { status: 404 });
-      const only = url.searchParams.get("s");
-      const match = only && env.SYMBOLS.split(",").find((x) => x.split(":")[0].trim() === only);
-      const text = formatLines(await fetchAll(provider, only ? match || only : env.SYMBOLS));
+      const { symbols } = await getSettings(env.STATE, env);
+      const only = url.searchParams.get("s")?.toUpperCase();
+      const picked = only ? [symbols.find((x) => x.code === only) ?? { code: only, label: "" }] : symbols;
+      const text = formatLines(await fetchAll(provider, picked));
       return new Response(text, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
     }
   }

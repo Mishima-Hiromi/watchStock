@@ -5,6 +5,8 @@ import { formatLine } from "../src/format";
 import { inWatchWindow, isSummaryTick, jstDate } from "../src/market";
 import { handleFetch, parseSymbols, runTick, type Env } from "../src/index";
 import type { Message } from "../src/push";
+import { validateSettings } from "../src/settings";
+import { SERVICE_WORKER } from "../src/app";
 
 // 2026-09-25 (Fri) at a given JST time, as epoch ms.
 const jst = (hhmm: string, day = "2026-09-25") => Date.parse(`${day}T${hhmm}:00+09:00`);
@@ -99,6 +101,10 @@ describe("checkAlert", () => {
     s = checkAlert(-2.0, 2, "d", s.state);
     expect(s.alert).toBe(true);
   });
+  it("starts over when the step changes", () => {
+    const s = checkAlert(4.1, 2, "d", undefined); // level 2 at 2% steps
+    expect(checkAlert(1.5, 1, "d", s.state)).toMatchObject({ alert: true, state: { step: 1, maxUp: 1 } });
+  });
   it("resets on a new day", () => {
     const s = checkAlert(2.1, 2, "d1", undefined);
     expect(checkAlert(2.1, 2, "d2", s.state).alert).toBe(true);
@@ -156,6 +162,12 @@ describe("HTTP routes", () => {
     for (const p of ["/", "/manifest.webmanifest", "/sw.js", "/icon-180.png"]) {
       expect((await handleFetch(req(p), env, provider, notify)).status).toBe(200);
     }
+    // The page script lives inside a TS template literal; escapes there are easy to break.
+    const html = await (await handleFetch(req("/"), env, provider, notify)).text();
+    const script = html.split("<script>")[1].split("</script>")[0];
+    expect(() => new Function(script)).not.toThrow();
+    expect(script).toContain(String.raw`.split(/[\s:：]+/)`);
+    expect(() => new Function(SERVICE_WORKER)).not.toThrow();
     const icon = await handleFetch(req("/icon-180.png"), env, provider, notify);
     expect(new Uint8Array(await icon.arrayBuffer()).slice(1, 4)).toEqual(new TextEncoder().encode("PNG"));
   });
@@ -176,7 +188,7 @@ describe("HTTP routes", () => {
     const bad = await handleFetch(req("/api/subscribe", { method: "POST", body: JSON.stringify({ endpoint: "http://x" }) }, "secret"), env, provider, notify);
     expect(bad.status).toBe(400);
     const st = await (await handleFetch(req("/api/status", {}, "secret"), env, provider, notify)).json();
-    expect(st).toMatchObject({ symbols: "7203", subscriptions: 1 });
+    expect(st).toMatchObject({ settings: { symbols: [{ code: "7203", label: "" }], summaryEveryMin: 30, alertStepPct: 2 }, subscriptions: 1 });
     const r2 = await handleFetch(req("/api/unsubscribe", { method: "POST", body: JSON.stringify({ endpoint: sub.endpoint }) }, "secret"), env, provider, notify);
     expect(await r2.json()).toEqual({ subscriptions: 0 });
   });
@@ -195,5 +207,52 @@ describe("HTTP routes", () => {
     const { env, provider, notify } = setup({ "7203": quote() });
     const res = await handleFetch(req("/quote?token=secret"), env, provider, notify);
     expect(await res.text()).toBe("トヨタ 2,989.5 ▲20.5 +0.69% 15:30");
+  });
+});
+
+describe("user settings", () => {
+  const put = (env: Env, provider: QuoteProvider, body: unknown) =>
+    handleFetch(
+      new Request("https://ws.example/api/settings", { method: "PUT", body: JSON.stringify(body), headers: { Authorization: "Bearer secret" } }),
+      env,
+      provider,
+      async () => {},
+    );
+
+  it("validates shape and ranges", () => {
+    expect(validateSettings({ symbols: [{ code: "7203" }, { code: "130a", label: "x" }], summaryEveryMin: 60, alertStepPct: 1.5 })).toEqual({
+      settings: { symbols: [{ code: "7203", label: "" }, { code: "130A", label: "x" }], summaryEveryMin: 60, alertStepPct: 1.5 },
+      errors: [],
+    });
+    const bad = validateSettings({ symbols: [{ code: "72" }, { code: "7203" }, { code: "7203" }], summaryEveryMin: 7, alertStepPct: 0.1 });
+    expect(bad.settings).toBeUndefined();
+    expect(bad.errors).toHaveLength(4);
+    expect(validateSettings({ symbols: Array.from({ length: 11 }, (_, i) => ({ code: String(1000 + i) })), summaryEveryMin: 0, alertStepPct: 0 }).errors).toEqual(["銘柄は 10 個までです"]);
+  });
+
+  it("saves, and the next tick uses the saved settings", async () => {
+    const { env, provider, notify, posted } = setup({ "7203": quote(), "6758": quote({ code: "6758", label: "ソニー", changePct: 1.2, change: 44 }) });
+    env.SYMBOLS = "7203";
+    const res = await put(env, provider, { symbols: [{ code: "6758", label: "ソニー" }], summaryEveryMin: 0, alertStepPct: 1 });
+    expect(res.status).toBe(200);
+    expect(await runTick(env, jst("10:00"), provider, notify)).toEqual(["alert:6758"]); // summary off, 1% step
+    expect(posted[0].title).toBe("上昇アラート ソニー");
+  });
+
+  it("returns 400 for a malformed body", async () => {
+    const { env, provider } = setup({ "7203": quote() });
+    const res = await handleFetch(
+      new Request("https://ws.example/api/settings", { method: "PUT", body: "{not json", headers: { Authorization: "Bearer secret" } }),
+      env, provider, async () => {},
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("rejects codes the data source does not know", async () => {
+    const { env, provider } = setup({ "7203": quote(), "9999": new Error("9999: HTTP 404") });
+    const res = await put(env, provider, { symbols: [{ code: "7203" }, { code: "9999" }], summaryEveryMin: 30, alertStepPct: 2 });
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ errors: ["銘柄コード「9999」の株価を取得できません"] });
+    expect(await env.STATE.get("settings")).toBeNull();
   });
 });
