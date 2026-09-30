@@ -256,3 +256,23 @@ describe("user settings", () => {
     expect(await env.STATE.get("settings")).toBeNull();
   });
 });
+
+describe("feed delay measurement", () => {
+  it("records the age of the freshest quote during continuous trading only", async () => {
+    const { recordDelay } = await import("../src/delay");
+    const q = (hhmm: string) => quote({ marketTime: jst(hhmm) / 1000 });
+    const a = recordDelay(jst("10:30"), [q("10:08"), q("10:10")], null)!;
+    expect(a).toMatchObject({ date: "2026-09-25", samples: 1, min: 20, max: 20 });
+    const b = recordDelay(jst("10:35"), [q("10:14")], a)!;
+    expect(b).toMatchObject({ samples: 2, min: 20, max: 21, sum: 41 });
+    expect(recordDelay(jst("12:00"), [q("11:30")], b)).toBeUndefined(); // lunch break
+    expect(recordDelay(jst("15:40"), [q("15:30")], b)).toBeUndefined(); // after close
+  });
+
+  it("is stored by the cron tick and reported by /api/status", async () => {
+    const { env, provider, notify } = setup({ "7203": quote({ marketTime: jst("10:10") / 1000 }) });
+    await runTick(env, jst("10:30"), provider, notify);
+    const res = await handleFetch(new Request("https://ws.example/api/status", { headers: { Authorization: "Bearer secret" } }), env, provider, notify);
+    expect((await res.json()).delay).toMatchObject({ samples: 1, min: 20, max: 20 });
+  });
+});

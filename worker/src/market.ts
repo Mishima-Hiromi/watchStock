@@ -31,3 +31,12 @@ export function isSummaryTick(epochMs: number, everyMin: number): boolean {
   const m = jstMinutes(epochMs);
   return inWatchWindow(epochMs) && (m - WATCH_START) % everyMin === 0;
 }
+
+/**
+ * Minutes when trades print continuously, with margins around the open, lunch break and close,
+ * so "now minus latest trade time" measures the feed delay rather than a pause in trading.
+ */
+export function inContinuousSession(epochMs: number): boolean {
+  const m = jstMinutes(epochMs);
+  return (m >= 9 * 60 + 30 && m <= 11 * 60 + 25) || (m >= 12 * 60 + 50 && m <= 15 * 60 + 25);
+}

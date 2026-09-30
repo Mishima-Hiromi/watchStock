@@ -2,6 +2,7 @@ import { YahooQuoteProvider, type Quote, type QuoteProvider } from "./quote";
 import { formatLine, formatLines } from "./format";
 import { inWatchWindow, isSummaryTick, jstDate } from "./market";
 import { checkAlert, type AlertState } from "./alerts";
+import { recordDelay, type DelayStats } from "./delay";
 import { addSub, getHistory, getVapidKeys, listSubs, removeSub, webPushNotifier, type Message, type Notifier } from "./push";
 import { getSettings, validateSettings, type Symbol } from "./settings";
 import { APP_HTML, MANIFEST, SERVICE_WORKER } from "./app";
@@ -53,6 +54,9 @@ export async function runTick(
   // A quote stamped on another day means the market is closed (holiday): stay quiet.
   const live = results.filter((r): r is Quote => !(r instanceof Error) && jstDate(r.marketTime * 1000) === today);
   if (live.length === 0) return sent;
+
+  const delay = recordDelay(nowMs, live, await env.STATE.get<DelayStats>("delay", "json"));
+  if (delay) await env.STATE.put("delay", JSON.stringify(delay));
 
   const step = settings.alertStepPct;
   for (const q of live) {
@@ -112,7 +116,11 @@ async function handleApi(
   const settings = await getSettings(env.STATE, env);
   switch (route) {
     case "GET /api/status":
-      return json({ settings, subscriptions: (await listSubs(env.STATE)).length });
+      return json({
+        settings,
+        subscriptions: (await listSubs(env.STATE)).length,
+        delay: await env.STATE.get<DelayStats>("delay", "json"),
+      });
     case "PUT /api/settings": {
       const { settings: next, errors } = validateSettings(await readJson(req));
       if (!next) return json({ errors }, 400);

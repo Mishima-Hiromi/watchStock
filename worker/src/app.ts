@@ -95,7 +95,7 @@ code { word-break:break-all; font-size:12px; }
     </div>
 
     <section>
-      <h2>株価 <span class="muted">（約 20 分遅れ）</span></h2>
+      <h2>株価 <span class="muted" id="delayLabel">（約 20 分遅れ）</span></h2>
       <div id="quotes" class="muted">読み込み中…</div>
       <p class="muted" id="updated"></p>
     </section>
@@ -202,7 +202,8 @@ function setSelect(sel, value, text) {
 }
 
 async function loadConfig() {
-  const { settings: st, subscriptions } = await api("/api/status");
+  const { settings: st, subscriptions, delay } = await api("/api/status");
+  if (delay && delay.samples > 0) $("delayLabel").textContent = "（" + delay.date.slice(5).replace("-", "/") + " の実測で約 " + Math.round(delay.sum / delay.samples) + " 分遅れ）";
   $("symbols").value = st.symbols.map((s) => (s.code + " " + s.label).trim()).join("\\n");
   setSelect($("summary"), st.summaryEveryMin, st.summaryEveryMin + " 分ごと");
   setSelect($("step"), st.alertStepPct, "±" + st.alertStepPct + "% ごと");
