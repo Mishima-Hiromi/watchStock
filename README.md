@@ -1,6 +1,6 @@
 # watchStock
 
-**はじめての方は [かんたん導入ガイド](docs/guide.md) をご覧ください。** 専門知識なしで、画像付きの手順どおりに設置できます。
+**はじめての方は [かんたん導入ガイド](https://mishima-hiromi.github.io/watchStock/) をご覧ください。** 専門知識なしで、画像付きの手順どおりに設置できます。
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker)
 
