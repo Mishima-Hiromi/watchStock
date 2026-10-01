@@ -1,7 +1,10 @@
 // Static PWA assets served by the Worker. The page holds no secrets; every API call needs the access token.
 
 export const MANIFEST = JSON.stringify({
+  id: "/",
   name: "watchStock",
+  description: "日本株の値動きを、スマホと腕時計に通知します",
+  lang: "ja",
   short_name: "株価",
   start_url: "/",
   scope: "/",
@@ -91,7 +94,9 @@ code { word-break:break-all; font-size:12px; }
 
   <div id="app" hidden>
     <div class="note" id="installHint" hidden>
-      iPhone で通知を受け取るには、Safari の共有ボタン →「ホーム画面に追加」をして、追加したアイコンから開き直してください。
+      <span id="hintIOS" hidden>iPhone で通知を受け取るには、Safari の共有ボタン →「ホーム画面に追加」をして、追加したアイコンから開き直してください。</span>
+      <span id="hintAndroid" hidden>ホーム画面に追加すると、アプリのように開けます。下のボタンか、Chrome のメニュー（︙）→「ホーム画面に追加」（または「アプリをインストール」）を押してください。通知はこのままでも受け取れます。</span>
+      <div class="row" style="margin-top:8px"><button id="installBtn" hidden>ホーム画面に追加</button></div>
     </div>
 
     <section>
@@ -229,6 +234,19 @@ $("settingsForm").onsubmit = async (e) => {
 
 const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const isAndroid = /Android/.test(navigator.userAgent);
+// Chrome on Android offers its own install prompt; keep it for our button.
+let installPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installPrompt = e; $("installBtn").hidden = false; });
+window.addEventListener("appinstalled", () => { $("installHint").hidden = true; });
+$("installBtn").onclick = async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  const { outcome } = await installPrompt.userChoice;
+  installPrompt = null;
+  $("installBtn").hidden = true;
+  if (outcome === "accepted") $("installHint").hidden = true;
+};
 
 async function currentSub() {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) return null;
@@ -297,7 +315,9 @@ function handleErr(e) { if (e.message === "unauthorized") { store.set(null); loc
 
 function start() {
   $("login").hidden = true; $("app").hidden = false;
-  $("installHint").hidden = !(isIOS && !standalone);
+  $("installHint").hidden = !((isIOS || isAndroid) && !standalone);
+  $("hintIOS").hidden = !isIOS;
+  $("hintAndroid").hidden = !isAndroid;
   loadQuotes(); loadHistory(); loadConfig().catch(handleErr); refreshPushState();
   setInterval(loadQuotes, 60000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) { loadQuotes(); loadHistory(); } });

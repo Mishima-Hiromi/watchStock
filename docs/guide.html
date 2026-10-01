@@ -116,7 +116,7 @@
       <span>9984 ソフトバンクG <span class="up">▲94 +1.53%</span></span>
     </div>
     <h1>watchStock <span class="nowrap">かんたん導入ガイド</span></h1>
-    <p class="lead">スマホを出せないときでも、Apple Watch で株価の動きが分かるようにする手順です。専門知識は要りません。上から順番に進めてください。</p>
+    <p class="lead">スマホを出せないときでも、腕時計（Apple Watch、Android の腕時計）で株価の動きが分かるようにする手順です。専門知識は要りません。上から順番に進めてください。</p>
     <div class="facts"><span class="fact">所要時間 約 30 分</span><span class="fact">費用 0 円</span><span class="fact">株価は約 15 分遅れ</span></div>
     <p class="note">「イラスト」と書いてある図は説明用の絵で、実際の画面とは細部が異なります。アプリ（watchStock）の画面は実際の画面です。GitHub と Cloudflare の画面は英語で表示されることがあるので、ボタンの名前には英語表示のときの例も添えています。</p>
   </header>
@@ -128,6 +128,7 @@
       <li><a href="#s3">専用のサーバーを作る</a></li>
       <li><a href="#s4">iPhone にアプリを入れる</a></li>
       <li><a href="#s5">通知をオンにする</a></li>
+      <li><a href="#s5a">Android の場合</a></li>
       <li><a href="#s6">銘柄と通知の設定</a></li>
       <li><a href="#s7">Watch で株価とチャートを見る</a></li>
       <li><a href="#s8">困ったとき</a></li>
@@ -150,8 +151,8 @@
     <div class="table-wrap"><table>
       <thead><tr><th>もの</th><th>条件</th></tr></thead>
       <tbody>
-        <tr><td>iPhone</td><td>iOS 16.4 以降。「設定」→「一般」→「情報」で確認できます</td></tr>
-        <tr><td>Apple Watch</td><td>iPhone とペアリング済み</td></tr>
+        <tr><td>スマホ</td><td><strong>iPhone</strong>（iOS 16.4 以降。「設定」→「一般」→「情報」で確認できます）、または <strong>Android</strong>（Chrome が入っているもの）</td></tr>
+        <tr><td>腕時計</td><td>iPhone なら <strong>Apple Watch</strong>。Android なら、スマホの通知が届く腕時計（Wear OS、Galaxy Watch、Huawei、Garmin など）</td></tr>
         <tr><td>メールアドレス</td><td>2 つのサービスへの登録に使います。同じアドレスで構いません</td></tr>
         <tr><td>合言葉</td><td>自分で決めます。<strong>12 文字以上</strong>で、他人に推測されにくいもの（例: <code>hanako-2026-kabu</code>。この例はそのまま使わず、自分で考えてください）。紙などにメモしておいてください</td></tr>
       </tbody>
@@ -223,6 +224,7 @@
 
   <section id="s4">
     <h2><span class="n">4</span>iPhone にアプリを入れる</h2>
+    <p class="note">Android の人は、4 と 5 の代わりに「<a href="#s5a">5A. Android の場合</a>」に進んでください。</p>
 
     <div class="sub">
       <h3>4-1. Safari で開いて、ホーム画面に追加する</h3>
@@ -287,6 +289,32 @@
         <figure class="ill"><a href="images/watch-notification.svg" target="_blank" rel="noopener"><img src="images/watch-notification.svg" alt="Apple Watch に届いた上昇アラートのイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
       </div>
       <p class="note">iPhone を手に持って画面がついているときは、通知は iPhone にだけ表示され、Watch には届きません。これは Apple Watch の仕組みです。</p>
+    </div>
+  </section>
+
+  <section id="s5a">
+    <h2><span class="n">5A</span>Android の場合</h2>
+    <p>Android では、Chrome でアプリを入れて通知を受け取ります。</p>
+    <ol class="steps">
+      <li>Android の <strong>Chrome</strong> で、3-3 でメモした URL を開きます</li>
+      <li>上に出る案内の「ホーム画面に追加」を押します（ボタンが出ないときは、Chrome のメニュー（︙）→「ホーム画面に追加」または「アプリをインストール」）</li>
+    </ol>
+    <figure class="shot"><img src="images/app-android-hint.png" alt="Android で開いたときに出る、ホーム画面に追加する案内とボタン" width="412" height="560"><figcaption>アプリの実際の画面</figcaption></figure>
+    <ol class="steps" start="3">
+      <li>ホーム画面の「株価」アイコンから開き、合言葉を入れて「はじめる」を押します（4-3 と同じです）</li>
+      <li>「通知をオン」を押し、通知を許可します</li>
+      <li>「テスト通知」を押して、スマホに通知が届くことを確かめます</li>
+    </ol>
+    <div class="sub">
+      <h3>腕時計に通知を届ける</h3>
+      <p>腕時計のアプリ（Galaxy Wearable、Pixel Watch、Huawei Health、Garmin Connect など）の通知の設定で、<strong>Chrome</strong> の通知をオンにします。スマホの通知が腕時計に転送されるようになります。設定の場所は腕時計のメーカーによって違うので、腕時計のアプリで「通知」を探してください。</p>
+    </div>
+    <div class="sub">
+      <h3>Android でできないこと</h3>
+      <ul class="plain">
+        <li>「<a href="#s7">7. Watch でいつでも株価とチャートを見る</a>」は Apple Watch 専用です。Android の腕時計では、届いた通知を見る形になります。最後に届いた「株価のまとめ」は腕時計の通知一覧に残るので、そこで直近の株価を確認できます</li>
+        <li>スマホでは、ホーム画面の「株価」アイコンを開けばいつでも最新の株価を見られます</li>
+      </ul>
     </div>
   </section>
 
@@ -373,6 +401,7 @@
       <div class="body"><ul class="plain">
         <li>iPhone の「Watch」アプリ →「通知」→「株価」が「iPhone を反映」になっているか確認してください</li>
         <li>iPhone の画面がついていると、通知は Watch に届きません</li>
+        <li>Android の場合は、腕時計のアプリの通知設定で Chrome がオンになっているか確認してください</li>
       </ul></div>
     </details>
     <details class="faq">
