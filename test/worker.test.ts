@@ -276,3 +276,13 @@ describe("feed delay measurement", () => {
     expect((await res.json()).delay).toMatchObject({ samples: 1, min: 20, max: 20 });
   });
 });
+
+describe("missing ACCESS_TOKEN", () => {
+  it("tells the app the secret is not set, instead of looking like a wrong password", async () => {
+    const { env, provider, notify } = setup({ "7203": quote() });
+    env.ACCESS_TOKEN = "";
+    const res = await handleFetch(new Request("https://ws.example/api/status", { headers: { Authorization: "Bearer x" } }), env, provider, notify);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "no_access_token" });
+  });
+});

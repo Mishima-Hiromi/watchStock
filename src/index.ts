@@ -111,6 +111,8 @@ async function handleApi(
   provider: QuoteProvider,
   notify: Notifier,
 ): Promise<Response> {
+  // Deploys made by connecting the Git repo (instead of the Deploy button) never prompt for the secret.
+  if (!env.ACCESS_TOKEN) return json({ error: "no_access_token" }, 503);
   if (!authorized(req, url, env)) return json({ error: "unauthorized" }, 401);
   const route = `${req.method} ${url.pathname}`;
   const settings = await getSettings(env.STATE, env);

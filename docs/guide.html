@@ -197,15 +197,27 @@
       </ol>
       <figure class="ill wide"><a href="images/deploy-button-2.svg" target="_blank" rel="noopener"><img src="images/deploy-button-2.svg" alt="Cloudflare の画面で GitHub と連携するボタンを押すイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
       <ol class="steps" start="3">
-        <li>設定の画面で、<strong>ACCESS_TOKEN（合言葉）</strong>の欄に、あなたが決めた合言葉を入力します。ほかの欄はそのままで構いません</li>
+        <li>GitHub の<strong>リポジトリ</strong>（アプリの設計図をしまう場所）を選ぶ欄が出ます。置き場所は自分の GitHub アカウントを選び、名前は <code>watchstock</code> のままで構いません</li>
+        <li>設定の画面で、<strong>ACCESS_TOKEN（合言葉）</strong>の欄に、あなたが決めた合言葉を入力します。ほかの欄はそのままで構いません。この欄が見当たらなければ、そのまま進んで、あとで <a href="#s3-4">3-4</a> の手順で設定します</li>
         <li>「作成してデプロイ」（英語表示なら Create and deploy）を押します</li>
       </ol>
       <figure class="ill wide"><a href="images/deploy-form.svg" target="_blank" rel="noopener"><img src="images/deploy-form.svg" alt="合言葉を入力して作成ボタンを押すイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
-      <ol class="steps" start="5">
+      <ol class="steps" start="6">
         <li>数分待つと完了します。<code>https://watchstock.〇〇〇.workers.dev</code> という形の URL が表示されるので、<strong>この URL をメモ</strong>してください。これがあなた専用のアプリの住所です</li>
       </ol>
       <figure class="ill wide"><a href="images/deploy-done.svg" target="_blank" rel="noopener"><img src="images/deploy-done.svg" alt="完成した URL をメモするイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
       <p class="note">「workers.dev のサブドメイン」を決めるよう求められたら、好きな英数字（例: hanako-kabu）を入力してください。URL の「〇〇〇」の部分になります。決めた直後の数分間は URL を開いてもエラーになることがあります。少し待ってから開き直してください。</p>
+    </div>
+
+    <div class="sub" id="s3-4">
+      <h3>3-4. 合言葉の欄が出なかったとき</h3>
+      <p>設置の途中で合言葉を入れる欄が出なかった場合は、ここで設定します。アプリを開いたときに「合言葉がまだ設定されていません」と表示された場合も同じです。</p>
+      <ol class="steps">
+        <li><a href="https://dash.cloudflare.com" target="_blank" rel="noopener">https://dash.cloudflare.com</a> にログインし、「Workers &amp; Pages」（または「コンピューティング」）を開きます</li>
+        <li>一覧から <code>watchstock</code> を選びます</li>
+        <li>「設定」（Settings）→「変数とシークレット」（Variables and Secrets）→「追加」（Add）を押します</li>
+        <li>種類は「シークレット」（Secret）、名前は <code>ACCESS_TOKEN</code>、値はあなたが決めた合言葉を入力して保存（デプロイ）します</li>
+      </ol>
     </div>
   </section>
 

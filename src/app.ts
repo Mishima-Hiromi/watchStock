@@ -164,6 +164,7 @@ let token = store.get();
 async function api(path, opts = {}) {
   const res = await fetch(path, { ...opts, headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json", ...(opts.headers || {}) } });
   if (res.status === 401) throw new Error("unauthorized");
+  if (res.status === 503) throw new Error("no_access_token");
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -284,7 +285,11 @@ $("copy").onclick = async () => {
 $("save").onclick = async () => {
   token = $("token").value.trim();
   try { await api("/api/status"); store.set(token); start(); }
-  catch { $("loginErr").textContent = "合言葉が違います"; }
+  catch (e) {
+    $("loginErr").textContent = e.message === "no_access_token"
+      ? "合言葉がまだ設定されていません。Cloudflare の管理画面で、この Worker の「設定」→「変数とシークレット」（Settings → Variables and Secrets）に、名前 ACCESS_TOKEN・種類「シークレット」で合言葉を追加してから、もう一度入力してください。"
+      : "合言葉が違います";
+  }
 };
 $("logout").onclick = () => { store.set(null); location.reload(); };
 
