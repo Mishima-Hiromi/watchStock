@@ -117,7 +117,7 @@
     </div>
     <h1>watchStock <span class="nowrap">かんたん導入ガイド</span></h1>
     <p class="lead">スマホを出せないときでも、Apple Watch で株価の動きが分かるようにする手順です。専門知識は要りません。上から順番に進めてください。</p>
-    <div class="facts"><span class="fact">所要時間 約 30 分</span><span class="fact">費用 0 円</span><span class="fact">株価は約 20 分遅れ</span></div>
+    <div class="facts"><span class="fact">所要時間 約 30 分</span><span class="fact">費用 0 円</span><span class="fact">株価は約 15 分遅れ</span></div>
     <p class="note">「イラスト」と書いてある図は説明用の絵で、実際の画面とは細部が異なります。アプリ（watchStock）の画面は実際の画面です。GitHub と Cloudflare の画面は英語で表示されることがあるので、ボタンの名前には英語表示のときの例も添えています。</p>
   </header>
 
@@ -142,7 +142,7 @@
       <li><strong>いつでも Watch で株価とチャートを見られます。</strong>Apple Watch に最初から入っている「株価」アプリを使います。</li>
       <li><strong>費用は 0 円です。</strong>あなた専用のサーバーを無料の範囲で動かします。クレジットカードの登録も要りません。</li>
     </ul>
-    <p class="warn">株価はおよそ 20 分遅れです。売買の判断はご自身の責任でお願いします。</p>
+    <p class="warn">株価はおよそ 15 分遅れです。売買の判断はご自身の責任でお願いします。</p>
   </section>
 
   <section id="s2">
@@ -191,7 +191,7 @@
       <h3>3-3. ボタンを押して作る</h3>
       <ol class="steps">
         <li>下のボタンを押します
-          <p style="margin-top:10px"><a class="deploy" href="https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker" target="_blank" rel="noopener">Deploy to Cloudflare <span>→</span></a></p>
+          <p style="margin-top:10px"><a class="deploy" href="https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock" target="_blank" rel="noopener">Deploy to Cloudflare <span>→</span></a></p>
         </li>
         <li>Cloudflare の画面が開きます。「GitHub と連携する」（英語表示なら Connect GitHub など）を押し、3-1 で作った GitHub のアカウントでログインして許可します</li>
       </ol>
@@ -334,7 +334,7 @@
       <figure class="ill"><a href="images/shortcuts-steps-3.svg" target="_blank" rel="noopener"><img src="images/shortcuts-steps-3.svg" alt="Apple Watch に表示をオンにするイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
       <ol class="steps" start="6">
         <li>Watch の文字盤を長押し →「編集」→ コンプリケーションの欄を選び、「ショートカット」から作ったショートカットを選びます</li>
-        <li>文字盤に置いたボタンを押すと、その時点の株価（約 20 分遅れ）が表示されます</li>
+        <li>文字盤に置いたボタンを押すと、その時点の株価（約 15 分遅れ）が表示されます</li>
       </ol>
       <div class="pair">
         <figure class="ill"><a href="images/watch-complication-1.svg" target="_blank" rel="noopener"><img src="images/watch-complication-1.svg" alt="文字盤のボタンを押すイラスト"></a><figcaption>イラスト・押すと拡大</figcaption></figure>
@@ -369,7 +369,7 @@
     </details>
     <details class="faq">
       <summary>株価の数字が古い</summary>
-      <div class="body"><p>約 20 分遅れの株価です。数字の横の時刻が、その株価の時刻です。</p></div>
+      <div class="body"><p>約 15 分遅れの株価です。数字の横の時刻が、その株価の時刻です。</p></div>
     </details>
     <details class="faq">
       <summary>お金はかかりますか</summary>

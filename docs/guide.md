@@ -20,7 +20,7 @@
 - **費用は 0 円**
   - あなた専用のサーバーを、無料の範囲で動かします。クレジットカードの登録も不要です
 
-株価はおよそ 20 分遅れです。売買の判断はご自身の責任でお願いします。
+株価はおよそ 15 分遅れです。売買の判断はご自身の責任でお願いします。
 
 ---
 
@@ -66,7 +66,7 @@
 
 1. 下のボタンを押します
 
-   [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker)
+   [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock)
 
 2. Cloudflare の画面が開きます。「GitHub と連携する」（英語表示なら Connect GitHub など）を押し、3-1 で作った GitHub のアカウントでログインして許可します
 
@@ -213,7 +213,7 @@ watchStock に登録した銘柄の株価を、文字盤のボタン 1 つで表
    ![Apple Watch に表示](images/shortcuts-steps-3.svg)
 
 6. Watch の文字盤を長押し →「編集」→ コンプリケーションの欄を選び、「ショートカット」から作ったショートカットを選びます
-7. 文字盤に置いたボタンを押すと、その時点の株価（約 20 分遅れ）が表示されます
+7. 文字盤に置いたボタンを押すと、その時点の株価（約 15 分遅れ）が表示されます
 
    ![文字盤のボタン](images/watch-complication-1.svg) ![表示された株価](images/watch-complication-2.svg)
 
@@ -238,7 +238,7 @@ watchStock に登録した銘柄の株価を、文字盤のボタン 1 つで表
 - Cloudflare にログインし、「Workers」の一覧から `watchstock` を選び、「設定」の「変数とシークレット」（英語表示なら Settings → Variables and Secrets）で ACCESS_TOKEN を新しい合言葉に変えてください。そのあと、アプリの「合言葉を消す」を押して新しい合言葉を入れ直します
 
 **株価の数字が古い**
-- 約 20 分遅れの株価です。数字の横の時刻が、その株価の時刻です
+- 約 15 分遅れの株価です。数字の横の時刻が、その株価の時刻です
 
 **お金はかかりますか**
 - かかりません。GitHub と Cloudflare の無料の範囲で動きます。クレジットカードの登録も不要です

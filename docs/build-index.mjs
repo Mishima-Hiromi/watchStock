@@ -14,7 +14,7 @@ const description =
   "iPhone と Apple Watch で株価の通知を受け取る watchStock の、専門知識なしで進められる画像付きの導入手順です。費用は 0 円。";
 
 // Same icon as the app itself.
-const icons = readFileSync(new URL("../worker/src/icons.ts", dir), "utf8");
+const icons = readFileSync(new URL("../src/icons.ts", dir), "utf8");
 const icon192 = /ICON_192 = "([^"]+)"/.exec(icons)[1];
 writeFileSync(new URL("images/app-icon.png", dir), Buffer.from(icon192, "base64"));
 

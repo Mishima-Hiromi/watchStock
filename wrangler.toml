@@ -11,7 +11,6 @@ SYMBOLS = "7203:トヨタ"
 SUMMARY_EVERY_MIN = "30"
 ALERT_STEP_PCT = "2"
 
-# Create with: npx wrangler kv namespace create STATE  -> paste the id below
+# No id on purpose: wrangler creates the namespace in whichever account deploys this (automatic provisioning).
 [[kv_namespaces]]
 binding = "STATE"
-id = "e17435dfeca549eb862506fd10ea6466"

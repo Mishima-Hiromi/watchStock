@@ -95,7 +95,7 @@ code { word-break:break-all; font-size:12px; }
     </div>
 
     <section>
-      <h2>株価 <span class="muted" id="delayLabel">（約 20 分遅れ）</span></h2>
+      <h2>株価 <span class="muted" id="delayLabel">（約 15 分遅れ）</span></h2>
       <div id="quotes" class="muted">読み込み中…</div>
       <p class="muted" id="updated"></p>
     </section>

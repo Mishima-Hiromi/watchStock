@@ -2,7 +2,7 @@
 
 **はじめての方は [かんたん導入ガイド](https://mishima-hiromi.github.io/watchStock/) をご覧ください。** 専門知識なしで、画像付きの手順どおりに設置できます。
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock/tree/main/worker)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Mishima-Hiromi/watchStock)
 
 iPhone を開けない場面でも、Apple Watch で日本株の値動きを確認するための仕組み。Mac も有料アカウントも、追加のアプリも不要で、運用費は 0 円。
 
@@ -11,7 +11,7 @@ iPhone を開けない場面でも、Apple Watch で日本株の値動きを確�
 
 株価のチャートは、Apple Watch に最初から入っている「株価」アプリで見る。iPhone の「株価」アプリのウォッチリストに銘柄（例: 7203）を追加すると、Watch にも表示される。このアプリは「動いたら知らせる」通知と、Watch からの即時確認を受け持つ。
 
-> 株価は Yahoo Finance の非公式エンドポイントから取得しており、東証銘柄は約 20 分遅れ。公式 API ではないため、予告なく使えなくなる可能性がある。投資判断は自己責任で。
+> 株価は Yahoo Finance の非公式エンドポイントから取得しており、東証銘柄は約 15 分遅れ（2026-10-01 の実測。Yahoo の公表値は 20 分）。公式 API ではないため、予告なく使えなくなる可能性がある。投資判断は自己責任で。
 
 ## 仕組み
 
@@ -34,14 +34,16 @@ Cloudflare Workers（無料枠・各自のアカウント）
 
 ### 1. デプロイ
 
+いちばん簡単なのは、このページ上部の Deploy to Cloudflare ボタン（手順は[導入ガイド](https://mishima-hiromi.github.io/watchStock/)）。コマンドで設置する場合:
+
 ```sh
-cd worker
 npm install
 npx wrangler login                      # ブラウザで Cloudflare にログイン
-npx wrangler kv namespace create STATE  # 出力された id を wrangler.toml の [[kv_namespaces]] id に貼る
 npx wrangler secret put ACCESS_TOKEN    # 合言葉。推測されにくいランダムな文字列にする
 npm run deploy                          # 表示された https://watchstock.<name>.workers.dev を控える
 ```
+
+保存用の KV は、初回のデプロイで自動的に作られる（`wrangler.toml` には ID を書かない）。
 
 初回のデプロイで「workers.dev subdomain を登録せよ」と出た場合は、表示されたダッシュボードの URL でサブドメインを登録してから再実行する。登録直後の数分間は SSL エラーで接続できないことがある。
 
@@ -77,7 +79,7 @@ PC の Chrome や Edge、Android の Chrome でも同じ URL を開いて通知�
 ソニー 3,710 ▲47 +1.28% 15:30
 ```
 
-末尾の時刻は価格の時刻（約 20 分遅れ）。URL には合言葉が含まれるため、ショートカットを他人に共有しないこと。
+末尾の時刻は価格の時刻（約 15 分遅れ）。URL には合言葉が含まれるため、ショートカットを他人に共有しないこと。
 
 ### 4. 銘柄と通知の設定
 
@@ -89,7 +91,7 @@ PWA の「通知の設定」で変更する。保存すると次の通知から�
 | まとめ通知 | 30 分ごと | 9:00 から一定間隔で全銘柄の株価を送る。「送らない」も選べる |
 | 値動きアラート | ±2% ごと | 前日比がこの幅を新たに超えるたびに送る（+2%、+4%…／-2%、-4%…）。同じ日に同じ段階では再送しない |
 
-`worker/wrangler.toml` の `[vars]`（`SYMBOLS`・`SUMMARY_EVERY_MIN`・`ALERT_STEP_PCT`）は、画面で一度も保存していないときの初期値。
+`wrangler.toml` の `[vars]`（`SYMBOLS`・`SUMMARY_EVERY_MIN`・`ALERT_STEP_PCT`）は、画面で一度も保存していないときの初期値。
 
 ## PWA の画面
 
@@ -111,7 +113,6 @@ PWA の「通知の設定」で変更する。保存すると次の通知から�
 ## 開発
 
 ```sh
-cd worker
 npm test              # 単体テスト（暗号化は独立実装 http_ece で復号して検証）
 npm run typecheck
 npm run dev           # ローカル起動。.dev.vars に ACCESS_TOKEN を書く
