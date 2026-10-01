@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>watchStock — NO MAP SANDBOX</title>
+<meta name="description" content="スマホを出せなくても、腕時計で株価の動きが分かる。iPhone・Android と Apple Watch・各社の腕時計に、株価のまとめと値動きのアラートを届けます。">
+<meta property="og:title" content="watchStock">
+<meta property="og:description" content="スマホを出せなくても、腕時計で株価の動きが分かる。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Klee+One:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Tokens follow the NO MAP SANDBOX team site (ourPages/style.css). */
+  :root {
+    --night: #0c0b0a;
+    --ground: #221e19;
+    --lamp: #f1e6cf;
+    --chalk: #e9dfca;
+    --dim: #8d8474;
+    --paper: #f4efe4;
+    --ink: #2a2520;
+    --up: #7fbf8e;
+    --down: #e38b74;
+    --ink-up: #2f6e3f;
+    --ink-down: #9b3b25;
+    --serif: "Klee One", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --display: "Gloock", "Klee One", serif;
+    --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body { margin: 0; background: var(--night); color: var(--chalk); font: 17px/1.9 var(--serif); padding-inline: 20px; }
+  :focus-visible { outline: 2px solid var(--lamp); outline-offset: 4px; }
+  a { color: var(--lamp); text-underline-offset: 4px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+
+  /* Language: every text has a ja and an en span; the root attribute picks one. */
+  html[data-ui="ja"] [lang="en"]:not(.both) { display: none; }
+  html[data-ui="en"] [lang="ja"]:not(.both) { display: none; }
+
+  header.top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-block: 22px 0; font-size: 14px; color: var(--dim); }
+  header.top a { color: var(--dim); text-decoration: none; }
+  .langs button { font: inherit; background: none; border: 0; color: var(--dim); cursor: pointer; padding: 2px 4px; }
+  .langs button[aria-pressed="true"] { color: var(--lamp); text-decoration: underline; text-underline-offset: 4px; }
+
+  .hero { padding-block: 72px 56px; }
+  .name { font: 400 15px var(--mono); letter-spacing: .08em; color: var(--dim); margin: 0 0 18px; }
+  h1 { font: 600 clamp(30px, 6vw, 46px)/1.45 var(--serif); color: var(--lamp); margin: 0; max-width: 18em; }
+  h1 [lang="en"] { font-family: var(--display); font-weight: 400; letter-spacing: .01em; }
+  .lead { margin: 22px 0 0; max-width: 34em; color: var(--chalk); }
+
+  /* A notification as it shows on a watch: the one concrete thing this product makes. */
+  .watch { margin-top: 44px; display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .face { width: 196px; aspect-ratio: 196 / 232; background: #000; border: 10px solid var(--ground); border-radius: 44px; padding: 22px 16px; display: grid; align-content: center; gap: 6px; flex: none; }
+  .face .app { font: 500 12px var(--mono); color: var(--dim); }
+  .face .t { font-weight: 600; color: var(--lamp); line-height: 1.4; }
+  .face .v { font: 500 14px/1.5 var(--mono); color: var(--up); }
+  .watch figcaption { color: var(--dim); font-size: 14px; max-width: 22em; }
+
+  section { padding-block: 44px; border-top: 1px solid #2c2721; }
+  h2 { font: 600 22px/1.5 var(--serif); color: var(--lamp); margin: 0 0 18px; }
+  h2 small { display: block; font: 400 13px var(--mono); color: var(--dim); letter-spacing: .06em; }
+  p { margin: 0 0 14px; }
+  ol.does { list-style: none; padding: 0; margin: 0; display: grid; gap: 22px; }
+  ol.does li { display: grid; grid-template-columns: 2.4em 1fr; gap: 4px 12px; }
+  ol.does .n { font: 500 15px var(--mono); color: var(--dim); padding-top: 4px; }
+  ol.does b { color: var(--lamp); font-weight: 600; }
+  .sample { font: 500 14px var(--mono); color: var(--dim); display: block; margin-top: 4px; }
+  .sample .up { color: var(--up); } .sample .down { color: var(--down); }
+
+  .devices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 32px; }
+  .devices dt { color: var(--lamp); font-weight: 600; }
+  .devices dd { margin: 0 0 12px; color: var(--chalk); }
+
+  .free .go { display: inline-block; margin-top: 8px; color: var(--night); background: var(--lamp); text-decoration: none; padding: 10px 18px; font-weight: 600; }
+
+  /* The pre-registration sits on paper, like the photos on the team site. */
+  .paper { color-scheme: light; background: var(--paper); color: var(--ink); padding: 28px 26px 30px; margin-top: 6px; box-shadow: 0 12px 34px rgb(0 0 0 / .5); }
+  .paper h2 { color: var(--ink); }
+  .paper h2 small { color: #6b6256; }
+  .paper p { color: var(--ink); }
+  fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+  legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .choices { display: grid; gap: 6px; }
+  .choices label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .choices input { width: 18px; height: 18px; accent-color: var(--ink); }
+  label.email { display: grid; gap: 6px; font-weight: 600; }
+  label.email span.hint { font-weight: 400; font-size: 14px; color: #6b6256; }
+  input[type="email"] { font: 16px var(--serif); padding: 10px 12px; border: 1px solid #b9ad97; background: #fffaf0; color: var(--ink); width: 100%; max-width: 26em; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  button.send { font: 600 17px var(--serif); background: var(--ink); color: var(--paper); border: 0; padding: 12px 22px; cursor: pointer; margin-top: 4px; }
+  button.send:disabled { opacity: .55; cursor: default; }
+  .result { margin-top: 14px; font-weight: 600; }
+  .result.err { color: var(--ink-down); }
+  .result.ok { color: var(--ink-up); }
+  .privacy { font-size: 14px; color: #5b5348; margin-top: 18px; }
+  details.del { margin-top: 10px; font-size: 14px; }
+  details.del summary { cursor: pointer; color: #5b5348; }
+  details.del form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  details.del button { font: 14px var(--serif); background: none; border: 1px solid #8a7f6d; color: var(--ink); padding: 8px 14px; cursor: pointer; }
+
+  dl.faq dt { color: var(--lamp); font-weight: 600; margin-top: 18px; }
+  dl.faq dd { margin: 4px 0 0; }
+
+  footer { border-top: 1px solid #2c2721; padding-block: 28px 56px; font-size: 14px; color: var(--dim); display: grid; gap: 6px; }
+  footer a { color: var(--dim); }
+  @media (max-width: 480px) { .hero { padding-block: 48px 40px; } .paper { padding: 22px 18px 24px; } }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a href="https://no-map-sandbox.vercel.app/">NO MAP SANDBOX</a>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-set="ja" aria-pressed="true">日本語</button>
+      <button type="button" data-set="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <p class="name">watchStock</p>
+    <h1><span lang="ja">スマホを出せなくても、腕時計で株価の動きが分かる。</span><span lang="en">Know how your stocks move, on your watch, without reaching for your phone.</span></h1>
+    <p class="lead"><span lang="ja">仕事中はスマホを開けないけれど、腕時計なら見られる。その時間に株価の動きを知りたくて、自分たちのために作りました。持っている銘柄の株価を、決まった時間ごとのまとめと、大きく動いたときのアラートで腕時計に届けます。</span><span lang="en">We can't open our phones at work, but we can glance at a watch. We wanted to follow our stocks during those hours, so we built this for ourselves. It sends a regular price summary for the stocks you follow, plus an alert when one makes a big move.</span></p>
+    <figure class="watch">
+      <div class="face" aria-hidden="true">
+        <span class="app">株価</span>
+        <span class="t">上昇アラート トヨタ</span>
+        <span class="v">3,048 ▲62<br>+2.08% 10:25</span>
+      </div>
+      <figcaption><span lang="ja">腕時計に届くアラートの例。前日比が ±2% を超えるごとに知らせます（幅は変えられます）。</span><span lang="en">An alert as it appears on a watch. You get one each time the day's change crosses another ±2% (adjustable).</span></figcaption>
+    </figure>
+  </div>
+
+  <section>
+    <h2><span lang="ja">できること</span><span lang="en">What it does</span><small lang="en" class="both">FEATURES</small></h2>
+    <ol class="does">
+      <li><span class="n">01</span><div><b lang="ja">決まった時間に株価のまとめ</b><b lang="en">A price summary on schedule</b><p><span lang="ja">取引時間中、30 分ごとなど決めた間隔で、全銘柄の株価をまとめて届けます。</span><span lang="en">During trading hours, all your stocks in one notification, every 30 minutes or whatever interval you choose.</span></p><span class="sample">トヨタ 2,986.5 <span class="down">▼3 -0.10%</span> 15:30</span></div></li>
+      <li><span class="n">02</span><div><b lang="ja">大きく動いたらアラート</b><b lang="en">An alert on big moves</b><p><span lang="ja">前日比が決めた幅を新しく超えたときだけ知らせます。同じ日に同じ段階では 1 回だけです。</span><span lang="en">Only when the day's change crosses a new step you set. Once per step per day.</span></p></div></li>
+      <li><span class="n">03</span><div><b lang="ja">Apple Watch ならチャートも</b><b lang="en">Charts on Apple Watch</b><p><span lang="ja">Apple Watch では、純正の「株価」アプリでいつでもチャートを確認でき、文字盤のボタンから今の株価も呼び出せます。</span><span lang="en">On Apple Watch, the built-in Stocks app shows charts any time, and a watch-face button pulls up current prices.</span></p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span lang="ja">使える端末</span><span lang="en">Devices</span><small lang="en" class="both">WORKS WITH</small></h2>
+    <dl class="devices">
+      <div><dt>iPhone + Apple Watch</dt><dd><span lang="ja">iOS 16.4 以降。アプリはホーム画面に追加して使います（App Store は不要）。</span><span lang="en">iOS 16.4 or later. Added to the home screen; no App Store needed.</span></dd></div>
+      <div><dt>Android + <span lang="ja">各社の腕時計</span><span lang="en">most watches</span></dt><dd><span lang="ja">Chrome で使います。Wear OS、Galaxy Watch、Huawei、Garmin など、スマホの通知が届く腕時計に対応します。</span><span lang="en">Runs in Chrome. Works with any watch that mirrors phone notifications: Wear OS, Galaxy Watch, Huawei, Garmin and others.</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="free">
+    <h2><span lang="ja">無料版</span><span lang="en">The free version</span><small lang="en" class="both">FREE VERSION</small></h2>
+    <p><span lang="ja">無料版は、株価が<strong>約 15 分遅れ</strong>です。あなた専用のサーバーを無料の範囲で動かすので、費用は 0 円です。画像付きの手順どおりに 30 分ほどで始められます。</span><span lang="en">The free version shows prices <strong>about 15 minutes delayed</strong>. It runs on your own server within free tiers, so it costs nothing. The illustrated guide takes about 30 minutes (Japanese).</span></p>
+    <a class="go" href="https://mishima-hiromi.github.io/watchStock/"><span lang="ja">導入ガイドを見る</span><span lang="en">Open the setup guide</span></a>
+  </section>
+
+  <section id="realtime">
+    <div class="paper">
+      <h2><span lang="ja">リアルタイム版の事前登録</span><span lang="en">Pre-register for a real-time version</span><small lang="en" class="both">REAL-TIME</small></h2>
+      <p><span lang="ja">遅れのない株価で届ける有料版を考えています。リアルタイムの株価を配るには取引所との契約が必要で、月々の費用がかかります。作るかどうかを決めるため、使いたい方の数と、払ってもよい金額を教えてください。</span><span lang="en">We're considering a paid version with no delay. Distributing real-time prices requires a contract with the exchange and a monthly fee, so before building it we'd like to know how many people want it and what they'd pay.</span></p>
+      <form id="signup" novalidate>
+        <fieldset>
+          <legend><span lang="ja">月額いくらなら使いますか</span><span lang="en">What would you pay per month?</span></legend>
+          <div class="choices">
+            <label><input type="radio" name="price" value="free"><span lang="ja">無料なら使う</span><span lang="en">Only if free</span></label>
+            <label><input type="radio" name="price" value="300"><span lang="ja">月 300 円</span><span lang="en">¥300 / month</span></label>
+            <label><input type="radio" name="price" value="500"><span lang="ja">月 500 円</span><span lang="en">¥500 / month</span></label>
+            <label><input type="radio" name="price" value="1000"><span lang="ja">月 1,000 円</span><span lang="en">¥1,000 / month</span></label>
+            <label><input type="radio" name="price" value="more"><span lang="ja">それ以上でも使う</span><span lang="en">More than that</span></label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend><span lang="ja">使う端末</span><span lang="en">Your phone</span></legend>
+          <div class="choices">
+            <label><input type="radio" name="device" value="iphone">iPhone</label>
+            <label><input type="radio" name="device" value="android">Android</label>
+            <label><input type="radio" name="device" value="other"><span lang="ja">その他</span><span lang="en">Other</span></label>
+          </div>
+        </fieldset>
+        <label class="email"><span lang="ja">メールアドレス（任意）</span><span lang="en">Email (optional)</span>
+          <span class="hint"><span lang="ja">入れていただいた方にだけ、リアルタイム版ができたときにお知らせします。</span><span lang="en">Only if you'd like a note when the real-time version is ready.</span></span>
+          <input type="email" id="email" name="email" autocomplete="email" inputmode="email">
+        </label>
+        <div class="hp" aria-hidden="true"><label>website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <p style="margin-top:18px"><button class="send" type="submit"><span lang="ja">登録する</span><span lang="en">Register</span></button></p>
+        <p class="result" id="result" role="status"></p>
+      </form>
+      <p class="privacy"><span lang="ja">メールアドレスは、リアルタイム版のお知らせにだけ使い、ほかの目的には使いません。IP アドレスなど、入力いただいた内容以外は保存しません。</span><span lang="en">Your email is used only to tell you about the real-time version, nothing else. We store nothing beyond what you enter, not even your IP address.</span></p>
+      <details class="del">
+        <summary><span lang="ja">登録したメールアドレスを削除する</span><span lang="en">Remove my email</span></summary>
+        <form id="remove" novalidate>
+          <input type="email" id="removeEmail" autocomplete="email" aria-label="email">
+          <button type="submit"><span lang="ja">削除する</span><span lang="en">Remove</span></button>
+        </form>
+        <p class="result" id="removeResult" role="status"></p>
+      </details>
+    </div>
+  </section>
+
+  <section>
+    <h2><span lang="ja">よくある質問</span><span lang="en">Questions</span><small lang="en" class="both">FAQ</small></h2>
+    <dl class="faq">
+      <dt><span lang="ja">なぜ無料版は 15 分遅れなのですか</span><span lang="en">Why is the free version 15 minutes behind?</span></dt>
+      <dd><span lang="ja">無料で使える株価は、取引所の決まりで遅れて配信されます。遅れのない株価を配るには取引所との有料の契約が必要です。</span><span lang="en">Prices that are free to use are released with a delay under exchange rules. Real-time prices need a paid agreement with the exchange.</span></dd>
+      <dt><span lang="ja">無料版にお金はかかりますか</span><span lang="en">Does the free version cost anything?</span></dt>
+      <dd><span lang="ja">かかりません。GitHub と Cloudflare の無料の範囲で動きます。クレジットカードの登録も要りません。</span><span lang="en">No. It runs within GitHub's and Cloudflare's free tiers, with no credit card.</span></dd>
+      <dt><span lang="ja">株価や設定は誰が持っていますか</span><span lang="en">Who holds my data?</span></dt>
+      <dd><span lang="ja">無料版は、あなた専用のサーバーがあなたのために株価を取ってきます。私たちは株価も、あなたの銘柄も預かりません。</span><span lang="en">In the free version, your own server fetches prices for you. We never hold prices or your list of stocks.</span></dd>
+      <dt><span lang="ja">リアルタイム版はいつ出ますか</span><span lang="en">When will the real-time version be out?</span></dt>
+      <dd><span lang="ja">まだ決まっていません。事前登録の数と希望の金額を見て、作るかどうかを決めます。登録しても料金は発生しません。</span><span lang="en">Not decided yet. We'll decide based on sign-ups and the prices people choose. Registering costs nothing.</span></dd>
+    </dl>
+  </section>
+
+  <footer>
+    <p><span lang="ja">運営</span><span lang="en">Made by</span> <a href="https://no-map-sandbox.vercel.app/">NO MAP SANDBOX</a></p>
+    <p><span lang="ja">無料版のソースコード（MIT ライセンス）</span><span lang="en">Free version source code (MIT)</span>: <a href="https://github.com/Mishima-Hiromi/watchStock">github.com/Mishima-Hiromi/watchStock</a></p>
+    <p><span lang="ja">株価の情報は投資判断の参考です。売買はご自身の判断でお願いします。</span><span lang="en">Prices are for reference only. Investment decisions are your own.</span></p>
+  </footer>
+</div>
+
+<script>
+  // Sign-up endpoint (signup/ in the watchStock repo), deployed on the owner's Cloudflare account.
+  const SIGNUP_URL = "https://watchstock-signup.hm-7e451146.workers.dev";
+
+  const MESSAGES = {
+    ja: { price: "月額を選んでください。", device: "使う端末を選んでください。", email: "メールアドレスの形が正しくありません。", too_many: "送信が続いたため、時間をおいてもう一度お試しください。", net: "送信できませんでした。通信状況を確かめて、もう一度お試しください。", ok: "登録しました。ありがとうございます。", removed: "削除しました（登録がなかった場合も、この表示になります）。", sending: "送信しています…" },
+    en: { price: "Please choose a monthly price.", device: "Please choose your phone.", email: "That email address doesn't look right.", too_many: "Too many submissions. Please try again later.", net: "Couldn't send. Check your connection and try again.", ok: "You're registered. Thank you.", removed: "Removed (you'll see this even if the address wasn't registered).", sending: "Sending…" },
+  };
+
+  function setLang(l) {
+    document.documentElement.dataset.ui = l;
+    document.documentElement.lang = l;
+    document.querySelectorAll(".langs button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.set === l)));
+    try { localStorage.setItem("lang", l); } catch {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem("lang"); } catch {}
+  setLang(saved === "ja" || saved === "en" ? saved : (navigator.language || "ja").startsWith("ja") ? "ja" : "en");
+  document.querySelectorAll(".langs button").forEach((b) => (b.onclick = () => setLang(b.dataset.set)));
+  const t = (k) => MESSAGES[document.documentElement.dataset.ui][k];
+
+  async function post(path, body) {
+    const res = await fetch(SIGNUP_URL + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    return { status: res.status, data: await res.json().catch(() => ({})) };
+  }
+
+  document.getElementById("signup").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const out = document.getElementById("result");
+    const price = f.price.value, device = f.device.value, email = f.email.value.trim();
+    out.className = "result err";
+    if (!price) return (out.textContent = t("price"));
+    if (!device) return (out.textContent = t("device"));
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (out.textContent = t("email"));
+    const btn = f.querySelector("button.send");
+    btn.disabled = true; out.className = "result"; out.textContent = t("sending");
+    try {
+      const { status, data } = await post("/signup", { price, device, email, lang: document.documentElement.dataset.ui, website: f.website.value });
+      if (status === 200) { out.className = "result ok"; out.textContent = t("ok"); f.reset(); }
+      else { out.className = "result err"; out.textContent = t(data.error) || t("net"); }
+    } catch { out.className = "result err"; out.textContent = t("net"); }
+    btn.disabled = false;
+  });
+
+  document.getElementById("remove").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const out = document.getElementById("removeResult");
+    const email = document.getElementById("removeEmail").value.trim();
+    out.className = "result err";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (out.textContent = t("email"));
+    try { await post("/delete", { email }); out.className = "result ok"; out.textContent = t("removed"); }
+    catch { out.textContent = t("net"); }
+  });
+</script>
+</body>
+</html>

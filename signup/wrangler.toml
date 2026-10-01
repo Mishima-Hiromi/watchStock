@@ -1,0 +1,13 @@
+# Pre-registration endpoint for the watchStock landing page. Deployed separately from the main app:
+#   npx wrangler deploy -c signup/wrangler.toml
+#   npx wrangler secret put ADMIN_TOKEN -c signup/wrangler.toml
+name = "watchstock-signup"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://no-map-sandbox.vercel.app"
+
+# No id on purpose: created on first deploy (automatic provisioning).
+[[kv_namespaces]]
+binding = "SIGNUPS"
