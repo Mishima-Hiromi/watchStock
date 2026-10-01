@@ -67,8 +67,8 @@ The 15 minutes is measured, not quoted: 32 samples on 2026-10-01 ranged 15.0–1
   - Hint: 入れていただいた方にだけ、リアルタイム版ができたときにお知らせします。 / Only if you'd like a note when the real-time version is ready.
 - Button: 登録する / Register
 - Privacy note (show near the form)
-  - メールアドレスは、リアルタイム版のお知らせにだけ使い、ほかの目的には使いません。IP アドレスなど、入力いただいた内容以外は保存しません。
-  - Your email is used only to tell you about the real-time version, nothing else. We store nothing beyond what you enter, not even your IP address.
+  - メールアドレスは、リアルタイム版のお知らせにだけ使い、ほかの目的には使いません。保存するのは入力いただいた内容だけです。連続送信を防ぐため、送信元を元に戻せない形にしたものを 1 日だけ記録し、その後は自動で消えます。
+  - Your email is used only to tell you about the real-time version, nothing else. We store only what you enter. To prevent repeated submissions, we keep an irreversible fingerprint of the sender for one day, after which it is deleted automatically.
 - Removal (collapsed is fine): 登録したメールアドレスを削除する / Remove my email, with an email field and a 削除する / Remove button.
 - Messages
 
